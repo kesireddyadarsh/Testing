@@ -2109,7 +2109,7 @@ int main(int argc, const char * argv[]) {
         cout<<"All Test"<<endl;
     }
     
-    for (int stat_run =0 ; stat_run < 30; stat_run++) {
+//    for (int stat_run =0 ; stat_run < 30; stat_run++) {
         if (run_simulation) {
             if(VERBOSE)
                 cout<<"Neural network"<<endl;
@@ -2271,7 +2271,7 @@ int main(int argc, const char * argv[]) {
                 
             }
         }
-    }
+//    }
     
     return 0;
 }
