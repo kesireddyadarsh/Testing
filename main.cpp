@@ -107,6 +107,7 @@ public:
     double local_reward_wrt_team;
     double global_reward_wrt_team;
     double difference_reward_wrt_team;
+    double difference_reward_new;
     
     //Hall of fame
     bool hall_of_fame = false;
@@ -1501,7 +1502,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 3;
+            int type_of_selection = 4;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1525,6 +1526,15 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                     
                 case 3:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
+                        //kill two
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
+                    }else{
+                        //kill one
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
+                    }
+                    break;
+                case 4:
+                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
@@ -1978,11 +1988,22 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         temp_sum_value += individualPOI->value_poi_vec.at(poi_number);
     }
     
+    
+    //Use for testing
+    for (int rover_number =0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy_number =0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new = teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team - teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team;
+        }
+    }
+    
+    
+    
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
             assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
             assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
             assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new);
         }
     }
     
