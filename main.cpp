@@ -1502,7 +1502,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 4;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1643,7 +1643,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
 void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double scaling_number, int policy, int rover_number){
     bool full_verbose  = false;
     bool verbose = false;
-    bool print_text = true;
+    bool print_text = false;
     
     int local_policy = policy;
     int local_rover_number = rover_number;
@@ -1662,8 +1662,8 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         teamRover->at(temp_rover_number).theta = 0.0;
     }
     
-    FILE* p_temp_text;
-    p_temp_text = fopen("X and Y coordinates", "a");
+//    FILE* p_temp_text;
+//    p_temp_text = fopen("X and Y coordinates", "a");
     
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
@@ -1673,7 +1673,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
             cout<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<endl;
         }
         
-        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
+//        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
         
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
@@ -1717,7 +1717,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     }
     
     
-    fclose(p_temp_text);
+//    fclose(p_temp_text);
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
