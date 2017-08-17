@@ -2008,7 +2008,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             if (temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team) {
                 FILE* p_miss;
                 p_miss =fopen("error_Data_X_Y", "a");
-                fprintf(p_miss, "%f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+                fprintf(p_miss, "%f \t %f \t %f \t %f \n",temp_sum_value,teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
                 
                 for (int x = 0 ; x< teamRover->at(rover_number).network_for_agent.at(policy_number).temp_x.size() ; x++) {
                     fprintf(p_miss,"%f \t %f\n", teamRover->at(rover_number).network_for_agent.at(policy_number).temp_x.at(x),teamRover->at(rover_number).network_for_agent.at(policy_number).temp_y.at(x));
