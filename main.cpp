@@ -1581,28 +1581,28 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
         assert(teamRover->at(rover_number).network_for_agent.size() == numNN/2);
     }
     
-    double check_difference_reward = 0.0;
-    vector<double> index;
-    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
-        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            if (check_difference_reward < teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team) {
-                check_difference_reward = teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team;
-            }
-        }
-    }
-    
-    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
-        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            if (teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team == check_difference_reward) {
-                index.push_back(rover_number);
-                index.push_back(policy_number);
-            }
-        }
-    }
-    vector<int> numbers_neuron;
-    numbers_neuron.push_back(9);
-    numbers_neuron.push_back(11);
-    numbers_neuron.push_back(3);
+//    double check_difference_reward = 0.0;
+//    vector<double> index;
+//    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
+//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+//            if (check_difference_reward < teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team) {
+//                check_difference_reward = teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team;
+//            }
+//        }
+//    }
+//    
+//    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
+//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+//            if (teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team == check_difference_reward) {
+//                index.push_back(rover_number);
+//                index.push_back(policy_number);
+//            }
+//        }
+//    }
+//    vector<int> numbers_neuron;
+//    numbers_neuron.push_back(9);
+//    numbers_neuron.push_back(11);
+//    numbers_neuron.push_back(3);
     
     //    for (int layers = 0; layers < teamRover->at(index.at(0)).network_for_agent.at(index.at(1)).z_layer.size(); layers++) {
     //        for (int loop_1 = 0; loop_1 < numbers_neuron.size(); loop_1++) {
@@ -1614,18 +1614,18 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
     //    }
     
     //Fill in the blank once
-    //    repopulate(teamRover, numNN);
+        repopulate(teamRover, numNN);
     
-    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
-        vector<unsigned> a;
-        for (int policy_number = 0; policy_number < (numNN/2); policy_number++) {
-            Net N(a);
-            int R = rand()%teamRover->at(rover_number).network_for_agent.size();
-            N = teamRover->at(rover_number).network_for_agent.at(R);
-            N.mutate();
-            teamRover->at(rover_number).network_for_agent.push_back(N);
-        }
-    }
+//    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+//        vector<unsigned> a;
+//        for (int policy_number = 0; policy_number < (numNN/2); policy_number++) {
+//            Net N(a);
+//            int R = rand()%teamRover->at(rover_number).network_for_agent.size();
+//            N = teamRover->at(rover_number).network_for_agent.at(R);
+//            N.mutate();
+//            teamRover->at(rover_number).network_for_agent.push_back(N);
+//        }
+//    }
     
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         assert(teamRover->at(rover_number).network_for_agent.size() == numNN);
