@@ -114,6 +114,10 @@ public:
     vector<double> objective_reward_local;
     vector<double> objective_reward_global;
     vector<double> objective_reward_difference;
+    
+    //store X and Y position
+    vector<double> temp_x;
+    vector<double> temp_y;
 };
 
 Net::Net(vector<unsigned> topology){
@@ -1708,6 +1712,9 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
             }
         }
         
+        teamRover->at(rover_number).network_for_agent.at(policy).temp_x.push_back(teamRover->at(rover_number).x_position);
+        teamRover->at(rover_number).network_for_agent.at(policy).temp_y.push_back(teamRover->at(rover_number).y_position);
+                                                                                  
         if (full_verbose) {
             cout<<"Print out Distances:: "<<endl;
             for (int temp_cal_distance = 0 ; temp_cal_distance < teamRover->at(local_rover_number).network_for_agent.at(local_policy).closest_dist_to_poi.size(); temp_cal_distance++) {
@@ -1996,7 +2003,20 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         }
     }
     
-    
+    for (int rover_number =0 ; rover_number< teamRover->size(); rover_number++) {
+        for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            if (temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team) {
+                FILE* p_miss;
+                p_miss =fopen("error_Data_X_Y", "a");
+                fprintf(p_miss, "%f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+                
+                for (int x = 0 ; x< teamRover->at(rover_number).network_for_agent.at(policy_number).temp_x.size() ; x++) {
+                    fprintf(p_miss,"%f \t %f\n", teamRover->at(rover_number).network_for_agent.at(policy_number).temp_x.at(x),teamRover->at(rover_number).network_for_agent.at(policy_number).temp_y.at(x));
+                }
+                fclose(p_miss);
+            }
+        }
+    }
     
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
@@ -2275,9 +2295,11 @@ int main(int argc, const char * argv[]) {
                         teamRover.at(rover_number).network_for_agent.at(neural_network).objective_reward_local.clear();
                         teamRover.at(rover_number).network_for_agent.at(neural_network).objective_reward_global.clear();
                         teamRover.at(rover_number).network_for_agent.at(neural_network).objective_reward_difference.clear();
+                        teamRover.at(rover_number).network_for_agent.at(neural_network).temp_x.clear();
+                        teamRover.at(rover_number).network_for_agent.at(neural_network).temp_y.clear();
                     }
                 }
-                cout<<endl;
+                
                 for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
                     for (int policy_number = 0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
                         cout<< teamRover.at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team<<"\t";
