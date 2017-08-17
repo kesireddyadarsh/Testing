@@ -1502,7 +1502,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 4;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -2276,6 +2276,13 @@ int main(int argc, const char * argv[]) {
                         teamRover.at(rover_number).network_for_agent.at(neural_network).objective_reward_global.clear();
                         teamRover.at(rover_number).network_for_agent.at(neural_network).objective_reward_difference.clear();
                     }
+                }
+                cout<<endl;
+                for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
+                    for (int policy_number = 0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
+                        cout<< teamRover.at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team<<"\t";
+                    }
+                    cout<<endl;
                 }
                 
                 //Find scaling number
