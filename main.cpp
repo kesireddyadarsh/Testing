@@ -151,9 +151,9 @@ void Net::mutate(){
      //popVector[temp].z_layer[temp][temp].z_outputWeights[temp].weight
      */
     for (int l =0 ; l < z_layer.size(); l++) {
-        for (int n =0 ; n< z_layer[l].size(); n++) {
-            for (int z=0 ; z< z_layer[l][n].z_outputWeights.size(); z++) {
-                z_layer[l][n].z_outputWeights[z].weight += random_global(.5)-random_global(.5);
+        for (int n =0 ; n< z_layer.at(l).size(); n++) {
+            for (int z=0 ; z< z_layer.at(l).at(n).z_outputWeights.size(); z++) {
+                z_layer.at(l).at(n).z_outputWeights.at(z).weight += random_global(.5)-random_global(.5);
             }
         }
     }
@@ -1432,33 +1432,6 @@ void set_teams_to_inital(vector<Rover>* p_rover, int numNN){
  Same old EA
  **************************************************************************/
 
-
-void survival_of_fittest(vector<Rover>* teamRover,int number_of_neural_network){
-    for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
-        for (int neural_network =0; neural_network < (number_of_neural_network/2); neural_network++) {
-            // Generate two random values
-            int random_number_1 = rand()%teamRover->at(rover_number).network_for_agent.size();
-            int random_number_2 = rand()%teamRover->at(rover_number).network_for_agent.size();
-            //This will save hall of fame policies
-            while ((teamRover->at(rover_number).network_for_agent.at(random_number_1).hall_of_fame == true || teamRover->at(rover_number).network_for_agent.at(random_number_2).hall_of_fame == true) || (random_number_1 == random_number_2)) {
-                random_number_1 = rand()%teamRover->at(rover_number).network_for_agent.size();
-                random_number_2 = rand()%teamRover->at(rover_number).network_for_agent.size();
-                
-            }
-            
-            //check which difference is less
-            if (teamRover->at(rover_number).network_for_agent.at(random_number_1).global_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).global_reward_wrt_team) {
-                //Kill random_number_1
-                teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
-            }else{
-                //Kill random_number_2
-                teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
-            }
-        }
-        assert(teamRover->at(rover_number).network_for_agent.size() == ((number_of_neural_network)/2) );
-    }
-}
-
 void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
     for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
         vector<unsigned> a;
@@ -1469,7 +1442,6 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
             N.mutate();
             teamRover->at(rover_number).network_for_agent.push_back(N);
         }
-        
         assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
     }
 }
@@ -1483,7 +1455,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             cout<<"Rover Number \t :::"<<rover_number<<endl;
             for (int prrint_rover_number = 0 ; prrint_rover_number < teamRover->size(); prrint_rover_number++) {
                 for (int print_policy_number = 0 ; print_policy_number < teamRover->at(prrint_rover_number).network_for_agent.size(); print_policy_number++) {
-                    cout<<teamRover->at(prrint_rover_number).network_for_agent.at(print_policy_number).difference_reward_wrt_team<<"\t";
+                    cout<<teamRover->at(prrint_rover_number).network_for_agent.at(print_policy_number).global_reward_wrt_team <<"\t";
                 }
                 cout<<endl;
             }
@@ -2172,7 +2144,7 @@ int main(int argc, const char * argv[]) {
                 cout<<"Neural network"<<endl;
             
             //First set up environment
-            int number_of_rovers = 2;
+            int number_of_rovers = 1;
             int number_of_poi = 6;
             int number_of_objectives = 2;
             
@@ -2283,7 +2255,7 @@ int main(int argc, const char * argv[]) {
             
             //Generations
             for(int generation =0 ; generation < 300 ;generation++){
-                cout<<"Generation \t \t :::"<<generation<<endl;
+                //cout<<"Generation \t \t :::"<<generation<<endl;
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
                 create_teams(p_rover, numNN);
@@ -2300,12 +2272,12 @@ int main(int argc, const char * argv[]) {
                     }
                 }
                 
-                for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
-                    for (int policy_number = 0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
-                        cout<< teamRover.at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team<<"\t";
-                    }
-                    cout<<endl;
-                }
+//                for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
+//                    for (int policy_number = 0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
+//                        cout<< teamRover.at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team<<"\t";
+//                    }
+//                    cout<<endl;
+//                }
                 
                 //Find scaling number
                 double scaling_number = find_scaling_number();
