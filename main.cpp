@@ -2168,7 +2168,7 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 2;
-            int number_of_poi = 6;
+            int number_of_poi = 1;
             int number_of_objectives = 1;
             
             //object for environment
