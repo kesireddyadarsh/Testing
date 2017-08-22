@@ -1,0 +1,5 @@
+Hello, World!
+
+All Test
+simulation_test_2: main.cpp:2011: void calculate_rewards(std::vector<Rover>*, POI*, int, int): Assertion `temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team' failed.
+srun: error: highmem01: task 0: Aborted
