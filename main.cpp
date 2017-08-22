@@ -2168,8 +2168,8 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 2;
-            int number_of_poi = 6;
-            int number_of_objectives = 1;
+            int number_of_poi = 2;
+            int number_of_objectives = 2;
             
             //object for environment
             Environment world;
@@ -2185,19 +2185,19 @@ int main(int argc, const char * argv[]) {
              individualPOI.y_position_poi_vec.push_back(100.0);
              individualPOI.x_position_poi_vec.push_back(100.0);
              individualPOI.y_position_poi_vec.push_back(150.0);
-             individualPOI.x_position_poi_vec.push_back(50.0);
-             individualPOI.y_position_poi_vec.push_back(150.0);
-             individualPOI.x_position_poi_vec.push_back(25.0);
-             individualPOI.y_position_poi_vec.push_back(50.0);
-            individualPOI.x_position_poi_vec.push_back(100.0);
-            individualPOI.y_position_poi_vec.push_back(80.0);
-            individualPOI.x_position_poi_vec.push_back(140.0);
-            individualPOI.y_position_poi_vec.push_back(120.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
+//             individualPOI.x_position_poi_vec.push_back(50.0);
+//             individualPOI.y_position_poi_vec.push_back(150.0);
+//             individualPOI.x_position_poi_vec.push_back(25.0);
+//             individualPOI.y_position_poi_vec.push_back(50.0);
+//            individualPOI.x_position_poi_vec.push_back(100.0);
+//            individualPOI.y_position_poi_vec.push_back(80.0);
+//            individualPOI.x_position_poi_vec.push_back(140.0);
+//            individualPOI.y_position_poi_vec.push_back(120.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(50.0);
             individualPOI.value_poi_vec.push_back(100.0);
             
             
@@ -2278,7 +2278,7 @@ int main(int argc, const char * argv[]) {
             
             //Generations
             for(int generation =0 ; generation < 300 ;generation++){
-                //cout<<"Generation \t \t :::"<<generation<<endl;
+                cout<<"Generation \t \t :::"<<generation<<endl;
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
                 create_teams(p_rover, numNN);
