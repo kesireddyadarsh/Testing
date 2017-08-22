@@ -1993,7 +1993,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     
     for (int rover_number =0 ; rover_number< teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            if (temp_sum_value < teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team) {
+            if (temp_sum_value <= teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team) {
                 FILE* p_miss;
                 p_miss =fopen("error_Data_X_Y", "a");
                 fprintf(p_miss, "%f \t %f \t %f \t %f \n",temp_sum_value,teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
@@ -2147,7 +2147,7 @@ int main(int argc, const char * argv[]) {
     cout << "Hello, World!\n"<<endl;
     bool VERBOSE = false;
     bool full_verbose = false;
-    bool print_text = false;
+    bool print_text = true;
     srand((unsigned)time(NULL));
     if (test_simulation) {
         test_all_sensors();
@@ -2161,7 +2161,7 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 1;
-            int number_of_poi = 3;
+            int number_of_poi = 1;
             int number_of_objectives = 1;
             
             //object for environment
@@ -2176,10 +2176,10 @@ int main(int argc, const char * argv[]) {
             
              individualPOI.x_position_poi_vec.push_back(50.0);
              individualPOI.y_position_poi_vec.push_back(100.0);
-             individualPOI.x_position_poi_vec.push_back(100.0);
-             individualPOI.y_position_poi_vec.push_back(150.0);
-             individualPOI.x_position_poi_vec.push_back(50.0);
-             individualPOI.y_position_poi_vec.push_back(150.0);
+//             individualPOI.x_position_poi_vec.push_back(100.0);
+//             individualPOI.y_position_poi_vec.push_back(150.0);
+//             individualPOI.x_position_poi_vec.push_back(50.0);
+//             individualPOI.y_position_poi_vec.push_back(150.0);
 //             individualPOI.x_position_poi_vec.push_back(25.0);
 //             individualPOI.y_position_poi_vec.push_back(50.0);
 //            individualPOI.x_position_poi_vec.push_back(100.0);
@@ -2189,8 +2189,8 @@ int main(int argc, const char * argv[]) {
 //            individualPOI.value_poi_vec.push_back(50.0);
 //            individualPOI.value_poi_vec.push_back(50.0);
 //            individualPOI.value_poi_vec.push_back(50.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
             
             
