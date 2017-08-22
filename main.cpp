@@ -2161,7 +2161,7 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 1;
-            int number_of_poi = 5;
+            int number_of_poi = 6;
             int number_of_objectives = 1;
             
             //object for environment
@@ -2184,9 +2184,9 @@ int main(int argc, const char * argv[]) {
              individualPOI.y_position_poi_vec.push_back(50.0);
             individualPOI.x_position_poi_vec.push_back(100.0);
             individualPOI.y_position_poi_vec.push_back(80.0);
-//            individualPOI.x_position_poi_vec.push_back(140.0);
-//            individualPOI.y_position_poi_vec.push_back(120.0);
-//            individualPOI.value_poi_vec.push_back(50.0);
+            individualPOI.x_position_poi_vec.push_back(140.0);
+            individualPOI.y_position_poi_vec.push_back(120.0);
+            individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
