@@ -2006,12 +2006,19 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         }
     }
     
+    double tolerance_upper_limit = temp_sum_value + 0.5;
+    double tolerance_lower_limit = temp_sum_value - 0.5;
+    
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
-            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
-            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new);
+//            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
+//            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+//            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+//            assert(temp_sum_value > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new);
+            assert((tolerance_upper_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team)&&( tolerance_lower_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team));
+            assert((tolerance_upper_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team)&&( tolerance_lower_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team));
+            assert((tolerance_upper_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team)&&( tolerance_lower_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team));
+            assert((tolerance_upper_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new)&&( tolerance_lower_limit > teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_new));
         }
     }
     
@@ -2176,21 +2183,21 @@ int main(int argc, const char * argv[]) {
             
              individualPOI.x_position_poi_vec.push_back(50.0);
              individualPOI.y_position_poi_vec.push_back(100.0);
-             individualPOI.x_position_poi_vec.push_back(100.0);
-             individualPOI.y_position_poi_vec.push_back(150.0);
-             individualPOI.x_position_poi_vec.push_back(50.0);
-             individualPOI.y_position_poi_vec.push_back(150.0);
-             individualPOI.x_position_poi_vec.push_back(25.0);
-             individualPOI.y_position_poi_vec.push_back(50.0);
-            individualPOI.x_position_poi_vec.push_back(100.0);
-            individualPOI.y_position_poi_vec.push_back(80.0);
-            individualPOI.x_position_poi_vec.push_back(140.0);
-            individualPOI.y_position_poi_vec.push_back(120.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(100.0);
+//             individualPOI.x_position_poi_vec.push_back(100.0);
+//             individualPOI.y_position_poi_vec.push_back(150.0);
+//             individualPOI.x_position_poi_vec.push_back(50.0);
+//             individualPOI.y_position_poi_vec.push_back(150.0);
+//             individualPOI.x_position_poi_vec.push_back(25.0);
+//             individualPOI.y_position_poi_vec.push_back(50.0);
+//            individualPOI.x_position_poi_vec.push_back(100.0);
+//            individualPOI.y_position_poi_vec.push_back(80.0);
+//            individualPOI.x_position_poi_vec.push_back(140.0);
+//            individualPOI.y_position_poi_vec.push_back(120.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
+//            individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
             
             
