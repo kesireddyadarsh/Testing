@@ -1432,15 +1432,31 @@ void set_teams_to_inital(vector<Rover>* p_rover, int numNN){
  Same old EA
  **************************************************************************/
 
+//void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
+//    for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
+//        vector<unsigned> a;
+//        for (int neural_network =0; neural_network < (number_of_neural_network/2); neural_network++) {
+//            int R = rand()%teamRover->at(rover_number).network_for_agent.size();
+//            Net N(a);
+//            N = teamRover->at(rover_number).network_for_agent.at(R);
+//            N.mutate();
+//            teamRover->at(rover_number).network_for_agent.push_back(N);
+//        }
+//        assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
+//    }
+//}
+
 void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
     for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
-        vector<unsigned> a;
+        //vector<unsigned> a;
         for (int neural_network =0; neural_network < (number_of_neural_network/2); neural_network++) {
             int R = rand()%teamRover->at(rover_number).network_for_agent.size();
-            Net N(a);
-            N = teamRover->at(rover_number).network_for_agent.at(R);
-            N.mutate();
-            teamRover->at(rover_number).network_for_agent.push_back(N);
+            //Net N(a);
+            //N = teamRover->at(rover_number).network_for_agent.at(R);
+            //N.mutate();
+            //teamRover->at(rover_number).network_for_agent.push_back(N);
+            teamRover->at(rover_number).network_for_agent.push_back(teamRover->at(rover_number).network_for_agent.at(R));
+            teamRover->at(rover_number).network_for_agent.back().mutate();
         }
         assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
     }
