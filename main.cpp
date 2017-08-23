@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <fstream>
+#include <string>
 
 
 using namespace std;
