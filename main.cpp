@@ -13,6 +13,7 @@
 #include <cassert>
 #include <algorithm>
 #include <stdio.h>
+#include <fstream>
 
 
 using namespace std;
@@ -1632,7 +1633,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
  6. for each policu in team calculate difference reward
  ********************************************************************************/
 
-void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double scaling_number, int policy, int rover_number){
+void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double scaling_number, int policy, int rover_number,int generation){
     bool full_verbose  = false;
     bool verbose = false;
     bool print_text = false;
@@ -1656,7 +1657,8 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
 //    FILE* p_temp_text;
 //    p_temp_text = fopen("X and Y coordinates", "a");
-    
+    ofstream my_file;
+    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
         
@@ -1666,7 +1668,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         }
         
 //        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
-        
+        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
         teamRover->at(local_rover_number).reset_sensors(); // Reset all sensors
@@ -1713,6 +1715,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
     
 //    fclose(p_temp_text);
+    my_file.close();
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
@@ -2277,7 +2280,7 @@ int main(int argc, const char * argv[]) {
             //        exit(100);
             
             //Generations
-            for(int generation =0 ; generation < 300 ;generation++){
+            for(int generation =0 ; generation < 100 ;generation++){
                 cout<<"Generation \t \t :::"<<generation<<endl;
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
@@ -2316,7 +2319,7 @@ int main(int argc, const char * argv[]) {
                 //            cout<<"simulation"<<endl;
                 for (int rover_number = 0 ; rover_number < p_rover->size(); rover_number++) {
                     for (int policy = 0 ; policy < teamRover.at(rover_number).network_for_agent.size(); policy++) {
-                        simulation_new_version(p_rover, p_poi, scaling_number, policy, rover_number);
+                        simulation_new_version(p_rover, p_poi, scaling_number, policy, rover_number,generation);
                     }
                 }
                 
