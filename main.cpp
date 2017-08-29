@@ -1325,7 +1325,7 @@ void test_all_sensors(){
 
 void create_teams(vector<Rover>* p_rover, int numNN){
     bool verbose = false;
-    bool print_text = false;
+    bool print_text = true;
     if (verbose) {
         cout<<"This are team numbers<<<"<<endl;
         for (int rover_number = 0; rover_number < p_rover->size(); rover_number++) {
@@ -2173,7 +2173,7 @@ int main(int argc, const char * argv[]) {
             //First set up environment
             int number_of_rovers = 2;
             int number_of_poi = 2;
-            int number_of_objectives = 2;
+            int number_of_objectives = 1;
             
             //object for environment
             Environment world;
@@ -2201,7 +2201,7 @@ int main(int argc, const char * argv[]) {
 //            individualPOI.value_poi_vec.push_back(100.0);
 //            individualPOI.value_poi_vec.push_back(100.0);
 //            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(50.0);
+            individualPOI.value_poi_vec.push_back(100.0);
             individualPOI.value_poi_vec.push_back(100.0);
             
             
@@ -2267,7 +2267,7 @@ int main(int argc, const char * argv[]) {
             vector<unsigned> topology;
             topology.clear();
             topology.push_back(8);
-            topology.push_back(10);
+            topology.push_back(14);
             topology.push_back(2);
             
             for (int rover_number =0 ; rover_number < number_of_rovers; rover_number++) {
