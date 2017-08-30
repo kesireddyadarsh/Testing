@@ -1658,8 +1658,8 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
 //    FILE* p_temp_text;
 //    p_temp_text = fopen("X and Y coordinates", "a");
-//    ofstream my_file;
-//    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
+    ofstream my_file;
+    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
         
@@ -1669,7 +1669,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         }
         
 //        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
-//        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
+        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
         teamRover->at(local_rover_number).reset_sensors(); // Reset all sensors
@@ -1716,7 +1716,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
     
 //    fclose(p_temp_text);
-//    my_file.close();
+    my_file.close();
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
@@ -2339,7 +2339,7 @@ int main(int argc, const char * argv[]) {
                 calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
                 //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
                 print_to_text(p_rover);
-                ccea(p_rover,p_poi,numNN,number_of_objectives);
+                //ccea(p_rover,p_poi,numNN,number_of_objectives);
                 
             }
         }
