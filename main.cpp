@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 
 using namespace std;
@@ -63,12 +64,13 @@ Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
 
 double Neuron::transferFunction(double x){
     
-    int case_to_use = 3;
+    int case_to_use = 1;
     switch (case_to_use) {
         case 1:
             return tanh(x);
             break;
         case 2:
+            //Dont use this case
             return 1/(1+exp(x));
             break;
         case 3:
@@ -1675,8 +1677,8 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
 //    FILE* p_temp_text;
 //    p_temp_text = fopen("X and Y coordinates", "a");
-//    ofstream my_file;
-//    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
+    ofstream my_file;
+    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
         
@@ -1686,7 +1688,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         }
         
 //        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
-//        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
+        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
         teamRover->at(local_rover_number).reset_sensors(); // Reset all sensors
@@ -1733,7 +1735,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
     
 //    fclose(p_temp_text);
-//    my_file.close();
+    my_file.close();
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
@@ -2189,8 +2191,8 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 2;
-            int number_of_poi = 1;
-            int number_of_objectives = 1;
+            int number_of_poi = 2;
+            int number_of_objectives = 2;
             
             //object for environment
             Environment world;
@@ -2202,14 +2204,14 @@ int main(int argc, const char * argv[]) {
             
             //Create POI
             
-             individualPOI.x_position_poi_vec.push_back(50.0);
-             individualPOI.y_position_poi_vec.push_back(100.0);
-//             individualPOI.x_position_poi_vec.push_back(100.0);
-//             individualPOI.y_position_poi_vec.push_back(150.0);
-//             individualPOI.x_position_poi_vec.push_back(50.0);
-//             individualPOI.y_position_poi_vec.push_back(150.0);
-//             individualPOI.x_position_poi_vec.push_back(25.0);
-//             individualPOI.y_position_poi_vec.push_back(50.0);
+            individualPOI.x_position_poi_vec.push_back(50.0);
+            individualPOI.y_position_poi_vec.push_back(100.0);
+            individualPOI.x_position_poi_vec.push_back(100.0);
+            individualPOI.y_position_poi_vec.push_back(150.0);
+//            individualPOI.x_position_poi_vec.push_back(50.0);
+//            individualPOI.y_position_poi_vec.push_back(150.0);
+//            individualPOI.x_position_poi_vec.push_back(25.0);
+//            individualPOI.y_position_poi_vec.push_back(50.0);
 //            individualPOI.x_position_poi_vec.push_back(100.0);
 //            individualPOI.y_position_poi_vec.push_back(80.0);
 //            individualPOI.x_position_poi_vec.push_back(140.0);
@@ -2218,7 +2220,7 @@ int main(int argc, const char * argv[]) {
 //            individualPOI.value_poi_vec.push_back(100.0);
 //            individualPOI.value_poi_vec.push_back(100.0);
 //            individualPOI.value_poi_vec.push_back(100.0);
-//            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(50.0);
             individualPOI.value_poi_vec.push_back(100.0);
             
             
