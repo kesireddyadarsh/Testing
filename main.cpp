@@ -1678,7 +1678,8 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
 //    FILE* p_temp_text;
 //    p_temp_text = fopen("X and Y coordinates", "a");
     ofstream my_file;
-    my_file.open("X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy));
+    string temp_string = "X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy);
+    my_file.open(temp_string);
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
         
