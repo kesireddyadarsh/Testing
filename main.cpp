@@ -62,7 +62,24 @@ Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
 }
 
 double Neuron::transferFunction(double x){
-    return sin(x);
+    
+    int case_to_use =1;
+    switch (case_to_use) {
+        case 1:
+            return tanh(x);
+            break;
+        case 2:
+            return 1/(1+exp(x));
+            break;
+        case 3:
+            return x/(1+abs(x));
+            break;
+            
+        default:
+            break;
+    }
+    
+    return tanh(x);
 }
 
 void Neuron::feedForward(const Layer prevLayer){
