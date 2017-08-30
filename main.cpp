@@ -63,7 +63,7 @@ Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
 
 double Neuron::transferFunction(double x){
     
-    int case_to_use = 2;
+    int case_to_use = 3;
     switch (case_to_use) {
         case 1:
             return tanh(x);
