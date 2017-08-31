@@ -1497,6 +1497,8 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 cout<<endl;
             }
         }
+        FILE* p_random;
+        p_random = fopen("random_numbers", "a");
         
         for (int policy = 0; policy < numNN/2; policy++) {
             if (verbose) {
@@ -1512,6 +1514,8 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             if (verbose) {
                 cout<< random_number_1<<"\t"<<random_number_2<<endl;
             }
+            
+            fprintf(p_random, "%d \t %d", random_number_1,random_number_2);
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
@@ -1566,6 +1570,8 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 }
             }
         }
+        fclose(p_random);
+        
     }
     
     //    FILE* p_wts;
@@ -1677,9 +1683,9 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
 //    FILE* p_temp_text;
 //    p_temp_text = fopen("X and Y coordinates", "a");
-    ofstream my_file;
-    string temp_string = "X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy);
-    my_file.open(temp_string);
+//    ofstream my_file;
+//    string temp_string = "X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy);
+//    my_file.open(temp_string);
     
     for (int time_step = 0 ; time_step < 50000 ; time_step++) {
         
@@ -1689,7 +1695,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         }
         
 //        fprintf(p_temp_text,"%f \t %f \n", teamRover->at(local_rover_number).x_position, teamRover->at(local_rover_number).y_position);
-        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
+//        my_file<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<"\n";
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
         teamRover->at(local_rover_number).reset_sensors(); // Reset all sensors
@@ -1736,7 +1742,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     
     
 //    fclose(p_temp_text);
-    my_file.close();
+//    my_file.close();
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
@@ -2301,7 +2307,7 @@ int main(int argc, const char * argv[]) {
             //        exit(100);
             
             //Generations
-            for(int generation =0 ; generation < 100 ;generation++){
+            for(int generation =0 ; generation < 35 ;generation++){
                 cout<<"Generation \t \t :::"<<generation<<endl;
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
