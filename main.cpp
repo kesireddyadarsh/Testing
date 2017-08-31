@@ -1484,7 +1484,7 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
 }
 
 void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
-    bool verbose = false;
+    bool verbose = true;
     
     // Remove low fitness policies
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
@@ -1515,11 +1515,11 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 cout<< random_number_1<<"\t"<<random_number_2<<endl;
             }
             
-            fprintf(p_random, "%d \t %d", random_number_1,random_number_2);
+            fprintf(p_random, "%d \t %d \n", random_number_1,random_number_2);
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 4;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
