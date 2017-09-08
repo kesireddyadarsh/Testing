@@ -2344,6 +2344,9 @@ int main(int argc, const char * argv[]) {
         
         //        exit(100);
         
+        //Find scaling number
+        double scaling_number = find_scaling_number();
+        
         //Generations
         for(int generation =0 ; generation < 35 ;generation++){
             cout<<"Generation \t \t :::"<<generation<<endl;
@@ -2370,8 +2373,7 @@ int main(int argc, const char * argv[]) {
             //                    cout<<endl;
             //                }
             
-            //Find scaling number
-            double scaling_number = find_scaling_number();
+            
             
             //Setting distance to largest
             for (int network_number =0 ; network_number <numNN; network_number++) {
