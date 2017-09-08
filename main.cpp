@@ -2198,7 +2198,7 @@ int main(int argc, const char * argv[]) {
             
             //First set up environment
             int number_of_rovers = 2;
-            int number_of_poi = 2;
+            int number_of_poi = 6;
             int number_of_objectives = 2;
             
             //object for environment
@@ -2215,20 +2215,20 @@ int main(int argc, const char * argv[]) {
             individualPOI.y_position_poi_vec.push_back(100.0);
             individualPOI.x_position_poi_vec.push_back(100.0);
             individualPOI.y_position_poi_vec.push_back(150.0);
-//            individualPOI.x_position_poi_vec.push_back(50.0);
-//            individualPOI.y_position_poi_vec.push_back(150.0);
-//            individualPOI.x_position_poi_vec.push_back(25.0);
-//            individualPOI.y_position_poi_vec.push_back(50.0);
-//            individualPOI.x_position_poi_vec.push_back(100.0);
-//            individualPOI.y_position_poi_vec.push_back(80.0);
-//            individualPOI.x_position_poi_vec.push_back(140.0);
-//            individualPOI.y_position_poi_vec.push_back(120.0);
-//            individualPOI.value_poi_vec.push_back(100.0);
-//            individualPOI.value_poi_vec.push_back(100.0);
-//            individualPOI.value_poi_vec.push_back(100.0);
-//            individualPOI.value_poi_vec.push_back(100.0);
-            individualPOI.value_poi_vec.push_back(50.0);
+            individualPOI.x_position_poi_vec.push_back(50.0);
+            individualPOI.y_position_poi_vec.push_back(150.0);
+            individualPOI.x_position_poi_vec.push_back(25.0);
+            individualPOI.y_position_poi_vec.push_back(50.0);
+            individualPOI.x_position_poi_vec.push_back(100.0);
+            individualPOI.y_position_poi_vec.push_back(80.0);
+            individualPOI.x_position_poi_vec.push_back(140.0);
+            individualPOI.y_position_poi_vec.push_back(120.0);
             individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(100.0);
+            individualPOI.value_poi_vec.push_back(50.0);
             
             
             //Create 100 poi's 50 at random locations with each group
@@ -2365,7 +2365,7 @@ int main(int argc, const char * argv[]) {
                 calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
                 //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
                 print_to_text(p_rover);
-                ccea(p_rover,p_poi,numNN,number_of_objectives);
+                //ccea(p_rover,p_poi,numNN,number_of_objectives);
                 
             }
         }
