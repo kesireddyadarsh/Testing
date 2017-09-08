@@ -2406,7 +2406,7 @@ int main(int argc, const char * argv[]) {
 //            cal_re_test(p_rover, p_poi, numNN, number_of_objectives);
             //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
             print_to_text(p_rover);
-            ccea(p_rover,p_poi,numNN,number_of_objectives);
+//            ccea(p_rover,p_poi,numNN,number_of_objectives);
             
         }
     }
