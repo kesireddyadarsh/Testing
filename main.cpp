@@ -1692,7 +1692,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     //    string temp_string = "X_Y_"+to_string(generation)+"_"+to_string(rover_number)+"_"+to_string(policy);
     //    my_file.open(temp_string);
     
-    for (int time_step = 0 ; time_step < 500 ; time_step++) {
+    for (int time_step = 0 ; time_step < 5000 ; time_step++) {
         
         if (verbose || full_verbose) {
             cout<<"Print X and Y location"<<endl;
