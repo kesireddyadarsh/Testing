@@ -1534,20 +1534,11 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 case 2:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).global_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).global_reward_wrt_team) {
                         //kill two
-                        int temp_rand_to_delete = random_number_2;
-                        if (temp_rand_to_delete != 0) {
-                            temp_rand_to_delete = temp_rand_to_delete-1;
-                        }
-                        cout<<"Kill two \n\n\n"<<endl;
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+temp_rand_to_delete);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
                         //kill one
-                        cout<<"Kill one \n\n\n"<<endl;
-                        int temp_rand_to_delete = random_number_1;
-                        if (temp_rand_to_delete != 0) {
-                            temp_rand_to_delete = temp_rand_to_delete-1;
-                        }
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+temp_rand_to_delete);
+                        
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
                     }
                     break;
                     
