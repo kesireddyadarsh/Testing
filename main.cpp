@@ -1484,7 +1484,7 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
 }
 
 void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
-    bool verbose = true;
+    bool verbose = false;
     
     // Remove low fitness policies
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
@@ -1534,20 +1534,30 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 case 2:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).global_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).global_reward_wrt_team) {
                         //kill two
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
+                        int temp_rand_to_delete = random_number_2;
+                        if (temp_rand_to_delete != 0) {
+                            temp_rand_to_delete = temp_rand_to_delete-1;
+                        }
+                        cout<<"Kill two \n\n\n"<<endl;
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+temp_rand_to_delete);
                     }else{
                         //kill one
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
+                        cout<<"Kill one \n\n\n"<<endl;
+                        int temp_rand_to_delete = random_number_1;
+                        if (temp_rand_to_delete != 0) {
+                            temp_rand_to_delete = temp_rand_to_delete-1;
+                        }
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+temp_rand_to_delete);
                     }
                     break;
                     
                 case 3:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
                         //kill one
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
                     }
                     break;
                 case 4:
