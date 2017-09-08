@@ -1519,7 +1519,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 4;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1534,20 +1534,20 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 case 2:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).global_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).global_reward_wrt_team) {
                         //kill two
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
                         //kill one
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
                     }
                     break;
                     
                 case 3:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
                         //kill one
-                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
+                        teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin(),teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
                     }
                     break;
                 case 4:
@@ -2365,7 +2365,7 @@ int main(int argc, const char * argv[]) {
                 calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
                 //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
                 print_to_text(p_rover);
-                //ccea(p_rover,p_poi,numNN,number_of_objectives);
+                ccea(p_rover,p_poi,numNN,number_of_objectives);
                 
             }
         }
