@@ -1537,7 +1537,6 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
                         //kill one
-                        
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_1);
                     }
                     break;
