@@ -2253,18 +2253,18 @@ int main(int argc, const char * argv[]) {
         individualPOI.y_position_poi_vec.push_back(100.0);
         individualPOI.x_position_poi_vec.push_back(100.0);
         individualPOI.y_position_poi_vec.push_back(150.0);
-        individualPOI.x_position_poi_vec.push_back(50.0);
-        individualPOI.y_position_poi_vec.push_back(150.0);
-        individualPOI.x_position_poi_vec.push_back(25.0);
-        individualPOI.y_position_poi_vec.push_back(50.0);
-        individualPOI.x_position_poi_vec.push_back(100.0);
-        individualPOI.y_position_poi_vec.push_back(80.0);
-        individualPOI.x_position_poi_vec.push_back(140.0);
-        individualPOI.y_position_poi_vec.push_back(120.0);
-        individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
+//        individualPOI.x_position_poi_vec.push_back(50.0);
+//        individualPOI.y_position_poi_vec.push_back(150.0);
+//        individualPOI.x_position_poi_vec.push_back(25.0);
+//        individualPOI.y_position_poi_vec.push_back(50.0);
+//        individualPOI.x_position_poi_vec.push_back(100.0);
+//        individualPOI.y_position_poi_vec.push_back(80.0);
+//        individualPOI.x_position_poi_vec.push_back(140.0);
+//        individualPOI.y_position_poi_vec.push_back(120.0);
+//        individualPOI.value_poi_vec.push_back(100.0);
+//        individualPOI.value_poi_vec.push_back(100.0);
+//        individualPOI.value_poi_vec.push_back(100.0);
+//        individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(50.0);
         
@@ -2327,7 +2327,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 2;
+        int numNN = 10;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
@@ -2344,7 +2344,6 @@ int main(int argc, const char * argv[]) {
         
         //        exit(100);
         
-        //Find scaling number
         double scaling_number = find_scaling_number();
         
         //Generations
@@ -2373,7 +2372,8 @@ int main(int argc, const char * argv[]) {
             //                    cout<<endl;
             //                }
             
-            
+            //Find scaling number
+//            double scaling_number = find_scaling_number();
             
             //Setting distance to largest
             for (int network_number =0 ; network_number <numNN; network_number++) {
@@ -2402,11 +2402,11 @@ int main(int argc, const char * argv[]) {
                 }
             }
             
-//            calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
-            cal_re_test(p_rover, p_poi, numNN, number_of_objectives);
+            calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
+//            cal_re_test(p_rover, p_poi, numNN, number_of_objectives);
             //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
             print_to_text(p_rover);
-            //ccea(p_rover,p_poi,numNN,number_of_objectives);
+            ccea(p_rover,p_poi,numNN,number_of_objectives);
             
         }
     }
