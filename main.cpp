@@ -2236,7 +2236,7 @@ int main(int argc, const char * argv[]) {
         
         //First set up environment
         int number_of_rovers = 2;
-        int number_of_poi = 6;
+        int number_of_poi = 2;
         int number_of_objectives = 2;
         
         //object for environment
@@ -2350,8 +2350,8 @@ int main(int argc, const char * argv[]) {
         for(int generation =0 ; generation < 35 ;generation++){
             cout<<"Generation \t \t :::"<<generation<<endl;
             //First Create teams
-            //set_teams_to_inital(p_rover, numNN);
-            //create_teams(p_rover, numNN);
+            set_teams_to_inital(p_rover, numNN);
+            create_teams(p_rover, numNN);
             
             for (int rover_number =0; rover_number<teamRover.size(); rover_number++) {
                 teamRover.at(rover_number).random_numbers.clear();      //This is not useful
