@@ -2350,7 +2350,7 @@ int main(int argc, const char * argv[]) {
         double scaling_number = find_scaling_number();
         
         //Generations
-        for(int generation =0 ; generation < 35 ;generation++){
+        for(int generation =0 ; generation < 100 ;generation++){
             cout<<"Generation \t \t :::"<<generation<<endl;
             //First Create teams
             set_teams_to_inital(p_rover, numNN);
