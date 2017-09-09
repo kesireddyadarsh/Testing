@@ -527,6 +527,9 @@ double find_scaling_number(){
     
     P_obj.x_position_poi=50.0;
     P_obj.y_position_poi=100.0;
+    P_obj.x_position_poi=150.0;
+    P_obj.y_position_poi=50.0;
+    P_obj.value_poi = 50;
     P_obj.value_poi =100;
     
     int temp_rand = rand()%100;
