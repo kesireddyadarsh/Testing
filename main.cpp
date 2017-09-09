@@ -2238,7 +2238,7 @@ int main(int argc, const char * argv[]) {
             cout<<"Neural network"<<endl;
         
         //First set up environment
-        int number_of_rovers = 2;
+        int number_of_rovers = 1;
         int number_of_poi = 2;
         int number_of_objectives = 2;
         
