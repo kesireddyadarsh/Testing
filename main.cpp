@@ -538,17 +538,18 @@ double find_scaling_number(){
     }
     vector < vector <double> > group_sensors;
     
-    for (int temp=0; temp<temp_rand; temp++) {
-        R_obj.x_position=rand()%100;
-        R_obj.y_position=rand()%100;
-        xposition.push_back(R_obj.x_position);
-        yposition.push_back(R_obj.y_position);
-        
-        
-        R_obj.reset_sensors();
-        R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
-        group_sensors.push_back(R_obj.sensors);
+    for (int temp_rover = 0; temp_rover < 2; temp_rover++) {
+        for (int temp=0; temp<temp_rand; temp++) {
+            R_obj.x_position=rand()%100;
+            R_obj.y_position=rand()%100;
+            xposition.push_back(R_obj.x_position);
+            yposition.push_back(R_obj.y_position);
+            R_obj.reset_sensors();
+            R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+            group_sensors.push_back(R_obj.sensors);
+        }
     }
+    
     
     assert(!group_sensors.empty());
     
@@ -2238,7 +2239,7 @@ int main(int argc, const char * argv[]) {
             cout<<"Neural network"<<endl;
         
         //First set up environment
-        int number_of_rovers = 1;
+        int number_of_rovers = 2;
         int number_of_poi = 2;
         int number_of_objectives = 2;
         
