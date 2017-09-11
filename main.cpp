@@ -517,39 +517,47 @@ double resolve(double angle){
 }
 
 
-double find_scaling_number(){
+double find_scaling_number(vector<Rover>* teamRover, POI* individualPOI){
     double number =0.0;
     double temp_number =0.0;
-    vector<double> xposition;
-    vector<double> yposition;
-    Rover R_obj; //Rover object
-    POI P_obj; // POI object
-    
-    P_obj.x_position_poi=50.0;
-    P_obj.y_position_poi=100.0;
-    P_obj.x_position_poi=150.0;
-    P_obj.y_position_poi=50.0;
-    P_obj.value_poi = 50;
-    P_obj.value_poi =100;
-    
-    int temp_rand = rand()%100;
-    while (temp_rand == 0) {
-        temp_rand = rand()%100;
-    }
     vector < vector <double> > group_sensors;
+//    vector<double> xposition;
+//    vector<double> yposition;
+//    Rover R_obj; //Rover object
+//    POI P_obj; // POI object
+//    
+//    P_obj.x_position_poi=50.0;
+//    P_obj.y_position_poi=100.0;
+//    P_obj.x_position_poi=150.0;
+//    P_obj.y_position_poi=50.0;
+//    P_obj.value_poi = 50;
+//    P_obj.value_poi =100;
+//    
+//    int temp_rand = rand()%100;
+//    while (temp_rand == 0) {
+//        temp_rand = rand()%100;
+//    }
+
     
-    for (int temp_rover = 0; temp_rover < 2; temp_rover++) {
-        for (int temp=0; temp<temp_rand; temp++) {
-            R_obj.x_position=rand()%100;
-            R_obj.y_position=rand()%100;
-            xposition.push_back(R_obj.x_position);
-            yposition.push_back(R_obj.y_position);
-            R_obj.reset_sensors();
-            R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
-            group_sensors.push_back(R_obj.sensors);
+//    //for (int temp_rover = 0; temp_rover < 2; temp_rover++) {
+//        for (int temp=0; temp<temp_rand; temp++) {
+//            R_obj.x_position=rand()%100;
+//            R_obj.y_position=rand()%100;
+//            xposition.push_back(R_obj.x_position);
+//            yposition.push_back(R_obj.y_position);
+//            R_obj.reset_sensors();
+//            R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+//            group_sensors.push_back(R_obj.sensors);
+//        }
+//    //}
+    
+    for (int rover_number =0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy_number = 0; policy_number< individualPOI->value_poi_vec.size(); policy_number++) {
+            teamRover->at(rover_number).reset_sensors();
+            teamRover->at(rover_number).sense_poi(individualPOI->x_position_poi_vec.at(policy_number), individualPOI->y_position_poi_vec.at(policy_number), individualPOI->value_poi_vec.at(policy_number));
+            group_sensors.push_back(teamRover->at(rover_number).sensors);
         }
     }
-    
     
     assert(!group_sensors.empty());
     
@@ -560,11 +568,11 @@ double find_scaling_number(){
         }
     }
     
-    R_obj.reset_sensors();
+//    R_obj.reset_sensors();
     
     assert(number != 0.0);
-    xposition.clear();
-    yposition.clear();
+//    xposition.clear();
+//    yposition.clear();
     return number;
 }
 
@@ -2240,7 +2248,7 @@ int main(int argc, const char * argv[]) {
         
         //First set up environment
         int number_of_rovers = 2;
-        int number_of_poi = 2;
+        int number_of_poi = 6;
         int number_of_objectives = 2;
         
         //object for environment
@@ -2257,18 +2265,18 @@ int main(int argc, const char * argv[]) {
         individualPOI.y_position_poi_vec.push_back(100.0);
         individualPOI.x_position_poi_vec.push_back(100.0);
         individualPOI.y_position_poi_vec.push_back(150.0);
-//        individualPOI.x_position_poi_vec.push_back(50.0);
-//        individualPOI.y_position_poi_vec.push_back(150.0);
-//        individualPOI.x_position_poi_vec.push_back(25.0);
-//        individualPOI.y_position_poi_vec.push_back(50.0);
-//        individualPOI.x_position_poi_vec.push_back(100.0);
-//        individualPOI.y_position_poi_vec.push_back(80.0);
-//        individualPOI.x_position_poi_vec.push_back(140.0);
-//        individualPOI.y_position_poi_vec.push_back(120.0);
-//        individualPOI.value_poi_vec.push_back(100.0);
-//        individualPOI.value_poi_vec.push_back(100.0);
-//        individualPOI.value_poi_vec.push_back(100.0);
-//        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.x_position_poi_vec.push_back(50.0);
+        individualPOI.y_position_poi_vec.push_back(150.0);
+        individualPOI.x_position_poi_vec.push_back(25.0);
+        individualPOI.y_position_poi_vec.push_back(50.0);
+        individualPOI.x_position_poi_vec.push_back(100.0);
+        individualPOI.y_position_poi_vec.push_back(80.0);
+        individualPOI.x_position_poi_vec.push_back(140.0);
+        individualPOI.y_position_poi_vec.push_back(120.0);
+        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(50.0);
         
@@ -2348,7 +2356,7 @@ int main(int argc, const char * argv[]) {
         
         //        exit(100);
         
-        double scaling_number = find_scaling_number();
+        double scaling_number = find_scaling_number(p_rover,p_poi);
         
         //Generations
         for(int generation =0 ; generation < 100 ;generation++){
