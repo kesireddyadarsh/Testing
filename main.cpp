@@ -2328,7 +2328,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 10;
+        int numNN = 4;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
