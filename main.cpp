@@ -1515,12 +1515,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             }
         }
         
-//        FILE* p_global;
-//        p_global = fopen("Global", "a");
-//        fprintf(p_global, "\n");
-//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-//            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-//        }
+        FILE* p_global;
+        p_global = fopen("Global", "a");
+        fprintf(p_global, "\n");
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+        }
         
         for (int policy = 0; policy < numNN/2; policy++) {
             if (verbose) {
@@ -1593,12 +1593,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             }
         }
         
-//        fprintf(p_global, "\n");
-//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-//            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-//        }
-//        fprintf(p_global, "\n");
-//        fclose(p_global);
+        fprintf(p_global, "\n");
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+        }
+        fprintf(p_global, "\n");
+        fclose(p_global);
         
     }
     
