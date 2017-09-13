@@ -2338,7 +2338,7 @@ int main(int argc, const char * argv[]) {
         }
         
         //Generations
-        for(int generation =0 ; generation < 100 ;generation++){
+        for(int generation =0 ; generation < 500 ;generation++){
             cout<<"Generation \t \t :::"<<generation<<endl;
             
             //First Create teams
