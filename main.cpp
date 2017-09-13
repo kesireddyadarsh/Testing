@@ -1361,7 +1361,7 @@ void test_all_sensors(){
 
 void create_teams(vector<Rover>* p_rover, int numNN){
     bool verbose = false;
-    bool print_text = true;
+    bool print_text = false;
     if (verbose) {
         cout<<"This are team numbers<<<"<<endl;
         for (int rover_number = 0; rover_number < p_rover->size(); rover_number++) {
@@ -1515,12 +1515,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             }
         }
         
-        FILE* p_global;
-        p_global = fopen("Global", "a");
-        fprintf(p_global, "\n");
-        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-        }
+//        FILE* p_global;
+//        p_global = fopen("Global", "a");
+//        fprintf(p_global, "\n");
+//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+//            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+//        }
         
         for (int policy = 0; policy < numNN/2; policy++) {
             if (verbose) {
@@ -1539,7 +1539,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 1;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1593,12 +1593,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             }
         }
         
-        fprintf(p_global, "\n");
-        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-        }
-        fprintf(p_global, "\n");
-        fclose(p_global);
+//        fprintf(p_global, "\n");
+//        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+//            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+//        }
+//        fprintf(p_global, "\n");
+//        fclose(p_global);
         
     }
     
@@ -2207,7 +2207,7 @@ int main(int argc, const char * argv[]) {
     cout << "Hello, World!\n"<<endl;
     bool VERBOSE = false;
     bool full_verbose = false;
-    bool print_text = true;
+    bool print_text = false;
     srand((unsigned)time(NULL));
     if (test_simulation) {
         test_all_sensors();
