@@ -1539,7 +1539,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 1;
+            int type_of_selection = 2;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -2424,10 +2424,10 @@ int main(int argc, const char * argv[]) {
             //print_to_text(p_rover);
             
             FILE* p_local;
-            p_local = fopen("Local_combined", "a");
+            p_local = fopen("Global_combined.txt", "a");
             for (int rover_number =0 ; rover_number < teamRover.size(); rover_number++) {
                 for (int policy_number =0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
-                    fprintf(p_local, "%f \n", teamRover.at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
+                    fprintf(p_local, "%f \n", teamRover.at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
                 }
             }
             fclose(p_local);
