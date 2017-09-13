@@ -1514,8 +1514,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 cout<<endl;
             }
         }
-        FILE* p_random;
-        p_random = fopen("random_numbers", "a");
+        
+        FILE* p_global;
+        p_global = fopen("Global", "a");
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+        }
         
         for (int policy = 0; policy < numNN/2; policy++) {
             if (verbose) {
@@ -1532,11 +1536,9 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 cout<< random_number_1<<"\t"<<random_number_2<<endl;
             }
             
-            fprintf(p_random, "%d \t %d \n", random_number_1,random_number_2);
-            
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 2;
+            int type_of_selection = 1;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1589,7 +1591,12 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 }
             }
         }
-        fclose(p_random);
+        
+        fprintf(p_global, "\n");
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
+        }
+        fclose(p_global);
         
     }
     
@@ -2425,19 +2432,19 @@ int main(int argc, const char * argv[]) {
                         if (teamRover.at(rover_number).network_for_agent.at(policy_number).best_value_so_far < teamRover.at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team) {
                             teamRover.at(rover_number).network_for_agent.at(policy_number).best_value_so_far = teamRover.at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team;
                         }else{
-                            for (int xy = 0; xy < teamRover.at(rover_number).network_for_agent.at(policy_number).temp_x.size(); xy++) {
-                                FILE* p_xy;
-                                p_xy = fopen("XY", "a");
-                                fprintf(p_xy, "%f \t %f \n",teamRover.at(rover_number).network_for_agent.at(policy_number).temp_x.at(xy),teamRover.at(rover_number).network_for_agent.at(policy_number).temp_y.at(xy));
-                                fclose(p_xy);
-                            }
+//                            for (int xy = 0; xy < teamRover.at(rover_number).network_for_agent.at(policy_number).temp_x.size(); xy++) {
+//                                FILE* p_xy;
+//                                p_xy = fopen("XY", "a");
+//                                fprintf(p_xy, "%f \t %f \n",teamRover.at(rover_number).network_for_agent.at(policy_number).temp_x.at(xy),teamRover.at(rover_number).network_for_agent.at(policy_number).temp_y.at(xy));
+//                                fclose(p_xy);
+//                            }
                         }
                     }
                 }
             }
 //            cal_re_test(p_rover, p_poi, numNN, number_of_objectives);
             //select_hall_of_fame(p_rover, p_poi, number_of_objectives);
-            print_to_text(p_rover);
+            //print_to_text(p_rover);
             ccea(p_rover,p_poi,numNN,number_of_objectives);
             
         }
