@@ -1522,7 +1522,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
-            int type_of_selection = 1;
+            int type_of_selection = 3;
             switch (type_of_selection) {
                 case 1:
                     if (teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).local_reward_wrt_team) {
@@ -1788,6 +1788,75 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             }
         }
     }
+    
+    //Difference reward
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            
+            vector<double> difference_closest_distance;
+            for (int cal_distance = 0 ; cal_distance < teamRover->at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.size(); cal_distance++) {
+                double temp_difference_distance = 999999999.99999;
+                for (int temp_rover_number = 0 ; temp_rover_number < teamRover->size(); temp_rover_number++) {
+                    if (rover_number != temp_rover_number) {
+                        for (int temp_policy_number = 0 ; temp_policy_number<teamRover->at(temp_rover_number).network_for_agent.size() ; temp_policy_number++) {
+                            if (teamRover->at(rover_number).network_for_agent.at(policy_number).my_team_number == teamRover->at(temp_rover_number).network_for_agent.at(temp_policy_number).my_team_number) {
+                                //Then check for calculations
+                                if (temp_difference_distance > teamRover->at(temp_rover_number).network_for_agent.at(temp_policy_number).closest_dist_to_poi.at(cal_distance)) {
+                                    temp_difference_distance = teamRover->at(temp_rover_number).network_for_agent.at(temp_policy_number).closest_dist_to_poi.at(cal_distance);
+                                }
+                            }
+                        }
+                    }
+                }
+                difference_closest_distance.push_back(temp_difference_distance);
+            }
+            
+            assert(difference_closest_distance.size() == individualPOI->value_poi_vec.size());
+            
+            //Calculate difference reward
+            double temp_difference_reward = 0 ;
+            for (int loop_counter = 0 ; loop_counter < difference_closest_distance.size(); loop_counter++) {
+                temp_difference_reward += ((individualPOI->value_poi_vec.at(loop_counter))/(difference_closest_distance.at(loop_counter)));
+            }
+            
+            teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team = temp_difference_reward;
+            
+            //            for (int other_rover = 0 ; other_rover < teamRover->size(); other_rover++) {
+            ////                cout<<"Inside loop rover number ::::::::::: \t"<<other_rover<<endl;
+            //                if ((other_rover != rover_number)) {
+            //                    for (int other_policy = 0 ; other_policy < teamRover->at(other_rover).network_for_agent.size(); other_policy++) {
+            //                        if (teamRover->at(other_rover).network_for_agent.at(other_policy).my_team_number == teamRover->at(rover_number).network_for_agent.at(policy_number).my_team_number) {
+            ////                            cout<<"Are you coming here"<<endl;
+            //                            teamRover->at(other_rover).network_for_agent.at(other_policy).difference_reward_wrt_team = temp_difference_reward;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            
+            //Calculate objective reward
+            double value_check = -11111.111;
+            double temp_distance = 0 ;
+            vector<double> temp_difference_values;
+            for (int distance = 0; distance < difference_closest_distance.size(); distance++) {
+                if ((distance == 0) || (value_check != individualPOI->value_poi_vec.at(distance))) {
+                    if( (distance !=0)) {
+                        //                        cout<<"Inside Push"<<endl;
+                        temp_difference_values.push_back(temp_distance);
+                    }
+                    temp_distance = 0;
+                    value_check = individualPOI->value_poi_vec.at(distance);
+                }
+                temp_distance += ((individualPOI->value_poi_vec.at(distance))/(difference_closest_distance.at(distance)));
+            }
+            temp_difference_values.push_back(temp_distance);
+            assert(temp_difference_values.size() == number_of_objectives);
+            
+            
+            
+        }
+    }
+    
     
 }
 
