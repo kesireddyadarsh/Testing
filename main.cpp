@@ -1729,7 +1729,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     }
     
     //Difference reward
-    
+    /*
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         
         for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
@@ -1762,6 +1762,14 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             
             teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team = temp_difference_reward;
             
+        }
+    }
+    
+     */
+    
+    for (int rover_number = 0 ; rover_number <teamRover->size(); rover_number++) {
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team = teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team - teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team;
         }
     }
     
