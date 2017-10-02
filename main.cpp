@@ -1773,16 +1773,16 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         }
     }
     
-    FILE* p_rewards;
-    p_rewards = fopen("Rewards", "a");
-    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
-        for (int policy_number = 0 ; policy_number< teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-            fprintf(p_rewards, "%f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
-        }
-    }
-    fprintf(p_rewards, "\n");
-    fclose(p_rewards);
-    
+//    FILE* p_rewards;
+//    p_rewards = fopen("Rewards", "a");
+//    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+//        for (int policy_number = 0 ; policy_number< teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+//            fprintf(p_rewards, "%f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+//        }
+//    }
+//    fprintf(p_rewards, "\n");
+//    fclose(p_rewards);
+//    
     
     
 }
@@ -1838,7 +1838,7 @@ int main(int argc, const char * argv[]) {
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(50.0);
         
         //vectors of rovers
         vector<Rover> teamRover;
@@ -1878,7 +1878,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 10;
+        int numNN = 100;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
@@ -1899,9 +1899,9 @@ int main(int argc, const char * argv[]) {
         }
         
         //Generations
-        for(int generation =0 ; generation < 10 ;generation++){
-                cout<<"Generation \t \t :::"<<generation<<endl;
-                
+        for(int generation =0 ; generation < 100 ;generation++){
+//                cout<<"Generation \t \t :::"<<generation<<endl;
+            
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
                 create_teams(p_rover, numNN);
