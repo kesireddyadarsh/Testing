@@ -1808,7 +1808,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 2;
+        int number_of_rovers = 4;
         int number_of_poi = 6;
         int number_of_objectives = 1;
         
