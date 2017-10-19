@@ -1541,7 +1541,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                 cout<< random_number_1<<"\t"<<random_number_2<<endl;
             }
             
-            fprintf(p_difference_data, "%d \t %d", random_number_1,random_number_2);
+            fprintf(p_difference_data, "%d \t %d \t", random_number_1,random_number_2);
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
