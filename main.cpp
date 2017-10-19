@@ -128,7 +128,6 @@ public:
     double local_reward_wrt_team;
     double global_reward_wrt_team;
     double difference_reward_wrt_team;
-    double difference_reward_new;
     
     
     //Testing CCEA
@@ -1486,6 +1485,20 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
 void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
     bool verbose = false;
     
+    FILE* p_before;
+    p_before = fopen("before.txt", "a");
+    
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_before, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+        }
+        fprintf(p_before, "\n");
+    }
+    fclose(p_before);
+    
+    FILE* p_difference_data;
+    p_difference_data = fopen("Difference_Data.txt", "a");
+    
     // Remove low fitness policies
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
         if (verbose) {
@@ -1505,6 +1518,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
 //            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
 //        }
         
+        
         for (int policy = 0; policy < numNN/2; policy++) {
             if (verbose) {
                 cout<<"policy \t :::"<<policy<<endl;
@@ -1519,6 +1533,8 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             if (verbose) {
                 cout<< random_number_1<<"\t"<<random_number_2<<endl;
             }
+            
+            fprintf(p_difference_data, "%d \t %d", random_number_1,random_number_2);
             
             //Select 1 for local reward 2 for global reward 3 for difference reward
             
@@ -1547,7 +1563,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                     break;
                     
                 case 3:
-                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
+                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
@@ -1558,10 +1574,22 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             }
         }
     }
+    fclose(p_difference_data);
     
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         assert(teamRover->at(rover_number).network_for_agent.size() == numNN/2);
     }
+    
+    FILE* p_after;
+    p_after = fopen("after.txt", "a");
+    
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+            fprintf(p_after, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+        }
+        fprintf(p_after, "\n");
+    }
+    fclose(p_after);
     
     //Repopulate other networks
     repopulate(teamRover, numNN);
@@ -1598,6 +1626,9 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
         }
     }
     
+    FILE* p_xy;
+    p_xy = fopen("XY.txt","a");
+    
     //setting all rovers to inital state
     for (int temp_rover_number =0 ; temp_rover_number<teamRover->size(); temp_rover_number++) {
         teamRover->at(temp_rover_number).x_position = teamRover->at(temp_rover_number).x_position_vec.at(0);
@@ -1611,6 +1642,7 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
             cout<<"Print X and Y location"<<endl;
             cout<<teamRover->at(local_rover_number).x_position<<"\t"<<teamRover->at(local_rover_number).y_position<<endl;
         }
+        fprintf(p_xy, "%f \t %f \n",teamRover->at(local_rover_number).x_position,teamRover->at(local_rover_number).y_position);
         
         
         //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
@@ -1652,9 +1684,13 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
             }
         }
     }
+    
+    fclose(p_xy);
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
+    
+    //CLosest distance calculation on 1
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
             for (int closest_distance = 0; closest_distance < teamRover->at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.size(); closest_distance++) {
@@ -1795,8 +1831,6 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
 
 int main(int argc, const char * argv[]) {
     cout << "Hello, World!\n"<<endl;
-    bool VERBOSE = false;
-    bool full_verbose = false;
     bool print_text = false;
     srand((unsigned)time(NULL));
     if (test_simulation) {
@@ -1810,7 +1844,7 @@ int main(int argc, const char * argv[]) {
         //First set up environment
         int number_of_rovers = 4;
         int number_of_poi = 6;
-        int number_of_objectives = 1;
+        int number_of_objectives = 2;
         
         //object for environment
 
@@ -1859,19 +1893,6 @@ int main(int argc, const char * argv[]) {
         assert(individualPOI.value_poi_vec.size() == individualPOI.y_position_poi_vec.size());
         assert(individualPOI.value_poi_vec.size() == number_of_poi);
         assert(teamRover.size() == number_of_rovers);
-        if (print_text) {
-            FILE* p_location;
-            p_location = fopen("locations.txt", "a");
-            fprintf(p_location, "Rover Locations \n");
-            for (int rover_number =0 ; rover_number < teamRover.size(); rover_number++) {
-                fprintf(p_location, "%f \t %f \n",teamRover.at(rover_number).x_position_vec.at(0),teamRover.at(rover_number).y_position_vec.at(0));
-            }
-            fprintf(p_location, "POI Location \n");
-            for (int poi_location = 0 ; poi_location < individualPOI.value_poi_vec.size(); poi_location++) {
-                fprintf(p_location, "%f \t %f \n",individualPOI.x_position_poi_vec.at(poi_location),individualPOI.y_position_poi_vec.at(poi_location));
-            }
-            fclose(p_location);
-        }
         
         //vector<Population> individual_population_rover; // Individual population is created
         
@@ -1899,7 +1920,7 @@ int main(int argc, const char * argv[]) {
         }
         
         //Generations
-        for(int generation =0 ; generation < 100 ;generation++){
+        for(int generation =0 ; generation < 1 ;generation++){
 //                cout<<"Generation \t \t :::"<<generation<<endl;
             
                 //First Create teams
@@ -1928,8 +1949,21 @@ int main(int argc, const char * argv[]) {
                         simulation_new_version(p_rover, p_poi, scaling_number, policy, rover_number,generation);
                     }
                 }
-                
+            
+            //closest distance
+            FILE* p_closest_distance;
+            p_closest_distance = fopen("Closest_dstance.txt","a");
+            for (int rover_number = 0 ; rover_number < teamRover.size(); rover_number++) {
+                for (int policy_number = 0 ; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
+                    for (int closest_distance = 0 ; closest_distance < teamRover.at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.size(); closest_distance++) {
+                        fprintf(p_closest_distance, "%f \t",teamRover.at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.at(closest_distance));
+                    }
+                    fprintf(p_closest_distance, "\n");
+                }
+            }
+            fclose(p_closest_distance);
                 calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
+            
                 
                 FILE* p_local;
                 p_local = fopen("Global_combined.txt", "a");
