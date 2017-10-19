@@ -1494,6 +1494,13 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
         }
         fprintf(p_before, "\n");
     }
+    
+    for (int rover = 0 ; rover < teamRover->size(); rover++) {
+        for (int policy = 0 ; policy < teamRover->at(rover).network_for_agent.size(); policy++) {
+            fprintf(p_before, "%d \t",teamRover->at(rover).network_for_agent.at(policy).my_team_number);
+        }
+        fprintf(p_before, "\n");
+    }
     fclose(p_before);
     
     FILE* p_difference_data;
@@ -1588,6 +1595,13 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             fprintf(p_after, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
         }
         fprintf(p_after, "\n");
+    }
+    
+    for (int rover = 0 ; rover < teamRover->size(); rover++) {
+        for (int policy = 0 ; policy < teamRover->at(rover).network_for_agent.size(); policy++) {
+            fprintf(p_before, "%d \t",teamRover->at(rover).network_for_agent.at(policy).my_team_number);
+        }
+        fprintf(p_before, "\n");
     }
     fclose(p_after);
     
