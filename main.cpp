@@ -1570,7 +1570,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                     break;
                     
                 case 3:
-                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
+                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
@@ -1856,7 +1856,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 4;
+        int number_of_rovers = 10;
         int number_of_poi = 6;
         int number_of_objectives = 2;
         
@@ -1885,7 +1885,7 @@ int main(int argc, const char * argv[]) {
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(50.0);
         individualPOI.value_poi_vec.push_back(50.0);
         
         //vectors of rovers
@@ -1932,6 +1932,7 @@ int main(int argc, const char * argv[]) {
                 teamRover.at(rover_number).network_for_agent.at(policy_number).best_value_so_far = 0.0;
             }
         }
+        
         
         //Generations
         for(int generation =0 ; generation < 100 ;generation++){
