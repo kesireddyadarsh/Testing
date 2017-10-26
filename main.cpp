@@ -1856,7 +1856,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 4;
+        int number_of_rovers = 10;
         int number_of_poi = 6;
         int number_of_objectives = 2;
         
@@ -1885,7 +1885,7 @@ int main(int argc, const char * argv[]) {
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
-        individualPOI.value_poi_vec.push_back(100.0);
+        individualPOI.value_poi_vec.push_back(50.0);
         individualPOI.value_poi_vec.push_back(50.0);
         
         //vectors of rovers
