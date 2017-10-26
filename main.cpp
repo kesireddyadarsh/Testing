@@ -1570,7 +1570,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
                     break;
                     
                 case 3:
-                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team < teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
+                    if (teamRover->at(rover_number).network_for_agent.at(random_number_1).difference_reward_wrt_team > teamRover->at(rover_number).network_for_agent.at(random_number_2).difference_reward_wrt_team) {
                         //kill two
                         teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
                     }else{
@@ -1932,6 +1932,7 @@ int main(int argc, const char * argv[]) {
                 teamRover.at(rover_number).network_for_agent.at(policy_number).best_value_so_far = 0.0;
             }
         }
+        
         
         //Generations
         for(int generation =0 ; generation < 100 ;generation++){
