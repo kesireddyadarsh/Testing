@@ -1483,7 +1483,7 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
     }
 }
 
-void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
+void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives,int reward_number){
     bool verbose = false;
     
     /*FILE* p_before;
@@ -1549,7 +1549,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             double fitness_1 = 0.0;
             double fitness_2 = 0.0;
             
-            int type_of_selection = 1;
+            int type_of_selection = reward_number;
             switch (type_of_selection) {
                 case 1:
                     fitness_1 = teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team;
@@ -1858,7 +1858,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 10;
+        int number_of_rovers = 4;
         int number_of_poi = number_of_rovers*5;
         int number_of_objectives = 2;
         
@@ -1917,6 +1917,7 @@ int main(int argc, const char * argv[]) {
         }
         fclose(p_print_poi);
         
+        for (int reward_number = 1; reward_number < 5; reward_number++) {
         
         for (int stat_run = 0 ; stat_run < 30; stat_run++) {
         
@@ -2019,13 +2020,15 @@ int main(int argc, const char * argv[]) {
                         fprintf(p_local, "\n");
                     }
                     fclose(p_local);
-                    ccea(p_rover,p_poi,numNN,number_of_objectives);
+                
+                    ccea(p_rover,p_poi,numNN,number_of_objectives,reward_number);
                 
                 }
             for (int nn = 0 ; nn < teamRover.size(); nn++) {
                 teamRover.at(nn).network_for_agent.clear();
             }
             teamRover.clear();
+        }
         }
     }
     return 0;
