@@ -1549,7 +1549,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
             double fitness_1 = 0.0;
             double fitness_2 = 0.0;
             
-            int type_of_selection = 4;
+            int type_of_selection = 1;
             switch (type_of_selection) {
                 case 1:
                     fitness_1 = teamRover->at(rover_number).network_for_agent.at(random_number_1).local_reward_wrt_team;
