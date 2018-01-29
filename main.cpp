@@ -266,7 +266,10 @@ public:
     void move_rover(double dx, double dy);
     double reward =0.0;
     void sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover);
-    
+    void sense_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover,vector<int>* p_index_number,int current_number,vector<Rover>* teamRover);
+    double sense_rover_new(double current_x, double current_y, double x_position_otherrover, double y_position_otherrover);
+    double sense_poi_new(double xposition, double yposition,double x_position_poi,double y_position_poi );
+    int find_quad_new(double x,double y, double the, double x_sense, double y_sense);
     //stored values
     vector<double> max_reward;
     vector<double> policy;
@@ -301,6 +304,14 @@ double Rover::sense_poi_delta(double x_position_poi,double y_position_poi ){
     return delta_sense_poi;
 }
 
+double Rover::sense_poi_new(double xposition, double yposition,double x_position_poi,double y_position_poi ){
+    double delta_sense_poi=0;
+    double distance = sqrt(pow(xposition-x_position_poi, 2)+pow(yposition-y_position_poi, 2));
+    double minimum_observation_distance =0.0;
+    delta_sense_poi=(distance>minimum_observation_distance)?distance:minimum_observation_distance ;
+    return delta_sense_poi;
+}
+
 //Function returns: sum of sqaure distance from a rover to all the other rovers in the quadrant
 double Rover::sense_rover_delta(double x_position_otherrover, double y_position_otherrover){
     double delta_sense_rover=0.0;
@@ -313,6 +324,17 @@ double Rover::sense_rover_delta(double x_position_otherrover, double y_position_
     return delta_sense_rover;
 }
 
+double Rover::sense_rover_new(double current_x, double current_y, double x_position_otherrover, double y_position_otherrover){
+    double delta_sense_rover=0.0;
+    if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
+        return delta_sense_rover;
+    }
+    double distance = sqrt(pow(current_x-x_position_otherrover, 2)+pow(current_y-y_position_otherrover, 2));
+    delta_sense_rover=(1/distance);
+    
+    return delta_sense_rover;
+}
+
 void Rover::sense_poi(double poix, double poiy, double val){
     double delta = sense_poi_delta(poix, poiy);
     int quad = find_quad(poix,poiy);
@@ -320,7 +342,7 @@ void Rover::sense_poi(double poix, double poiy, double val){
 }
 
 void Rover::sense_rover(double otherx, double othery){
-    double delta = sense_poi_delta(otherx,othery);
+    double delta = sense_rover_delta(otherx,othery);
     int quad = find_quad(otherx,othery);
     sensors.at(quad+4) += 1/delta;
 }
@@ -347,6 +369,45 @@ double Rover::find_theta(double x_sensed, double y_sensed){
     theta += atan2(distance_in_x_theta,distance_in_y_theta) * (180 / PI);
     
     return phi;
+}
+
+int Rover::find_quad_new(double x,double y, double the, double x_sense, double y_sense){
+    int quadrant;
+    
+    double distance_in_x_phi =  x_sense - x;
+    double distance_in_y_phi =  y_sense - y;
+    double deg2rad = 180/PI;
+    double phi = (atan2(distance_in_x_phi,distance_in_y_phi) *(deg2rad));
+    double quadrant_angle = phi - the;
+    
+    quadrant_angle = resolve(quadrant_angle);
+    assert(quadrant_angle != NAN);
+    //    cout << "IN QUAD: FIND PHI: " << phi << endl;
+    
+    phi = resolve(phi);
+    
+    //    cout << "IN QUAD: FIND PHI2: " << phi << endl;
+    
+    int case_number;
+    if ((0 <= quadrant_angle && 45 >= quadrant_angle)||(315 < quadrant_angle && 360 >= quadrant_angle)) {
+        //do something in Q1
+        case_number = 0;
+    }else if ((45 < quadrant_angle && 135 >= quadrant_angle)) {
+        // do something in Q2
+        case_number = 1;
+    }else if((135 < quadrant_angle && 225 >= quadrant_angle)){
+        //do something in Q3
+        case_number = 2;
+    }else if((225 < quadrant_angle && 315 >= quadrant_angle)){
+        //do something in Q4
+        case_number = 3;
+    }
+    quadrant = case_number;
+    
+    //    cout << "QUADANGLE =  " << quadrant_angle << endl;
+    //    cout << "QUADRANT = " << quadrant << endl;
+    
+    return quadrant;
 }
 
 int Rover::find_quad(double x_sensed, double y_sensed){
@@ -429,6 +490,63 @@ void Rover::sense_all_values(vector<double> x_position_poi_vec_rover,vector<doub
     }
     
 }
+
+
+void Rover::sense_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover,vector<int>* p_index_number,int current_number,vector<Rover>* teamRover){
+    
+    //First sense POIs
+    double temp_delta_value = 0.0;
+    vector<double> temp_delta_vec;
+    int temp_quad_value =0;
+    vector<double> temp_quad_vec;
+    
+    assert(x_position_poi_vec_rover.size() == y_position_poi_vec_rover.size());
+    assert(value_poi_vec_rover.size() == y_position_poi_vec_rover.size());
+    
+    for (int value_calculating_delta = 0 ; value_calculating_delta < x_position_poi_vec_rover.size(); value_calculating_delta++) {
+        temp_delta_value = sense_rover_new(teamRover->at(current_number).x_position, teamRover->at(current_number).y_position,x_position_poi_vec_rover.at(value_calculating_delta), y_position_poi_vec_rover.at(value_calculating_delta));
+        temp_delta_vec.push_back(temp_delta_value);
+    }
+    
+    for (int value_calculating_quad = 0 ; value_calculating_quad < x_position_poi_vec_rover.size(); value_calculating_quad++) {
+        temp_quad_value = find_quad_new(teamRover->at(current_number).x_position, teamRover->at(current_number).y_position, teamRover->at(current_number).theta, x_position_poi_vec_rover.at(value_calculating_quad), y_position_poi_vec_rover.at(value_calculating_quad));
+        temp_quad_vec.push_back(temp_quad_value);
+    }
+    
+    assert(temp_delta_vec.size()== temp_quad_vec.size());
+    
+    //Now sense rovers
+    double new_temp_delta_value = 0.0;
+    vector<double> new_temp_delta_vec;
+    int new_temp_quad_value =0;
+    vector<double> new_temp_quad_vec;
+    
+    //for (int value_calculating_delta = 0 ; value_calculating_delta < x_position_poi_vec_rover.size(); value_calculating_delta++) {
+      //  temp_delta_value = sense_poi_delta(x_position_poi_vec_rover.at(value_calculating_delta), y_position_poi_vec_rover.at(value_calculating_delta));
+        //temp_delta_vec.push_back(temp_delta_value);
+    //}
+    
+    for (int other_rover = 0; other_rover < p_index_number->size(); other_rover++) {
+        if (current_number != other_rover) {
+            //x and y coordinates
+            new_temp_delta_value = sense_rover_new(teamRover->at(current_number).x_position, teamRover->at(current_number).y_position, teamRover->at(other_rover).x_position, teamRover->at(other_rover).y_position);
+            new_temp_delta_vec.push_back(new_temp_delta_value);
+            new_temp_quad_value = find_quad_new(teamRover->at(current_number).x_position, teamRover->at(current_number).y_position, teamRover->at(current_number).theta,teamRover->at(other_rover).x_position, teamRover->at(other_rover).y_position);
+            new_temp_quad_vec.push_back(new_temp_quad_value);
+        }
+    }
+    
+    assert(new_temp_delta_vec.size()== new_temp_quad_vec.size());
+    
+    for (int update_sensor = 0 ; update_sensor<temp_quad_vec.size(); update_sensor++) {
+        sensors.at(temp_quad_vec.at(update_sensor)) += value_poi_vec_rover.at(update_sensor)/temp_delta_vec.at(update_sensor);
+    }
+    
+    for (int update_sensor = 0 ; update_sensor<new_temp_quad_vec.size(); update_sensor++) {
+        sensors.at(new_temp_quad_vec.at(update_sensor)) += value_poi_vec_rover.at(update_sensor)/temp_delta_vec.at(update_sensor);
+    }
+}
+
 
 /*************************
  Population
@@ -567,7 +685,7 @@ double find_scaling_number(vector<Rover>* teamRover, POI* individualPOI){
     return number;
 }
 
-
+/*
 void remove_lower_fitness_network(Population * p_Pop,vector<Rover>* p_rover){
     
     bool VERBOSE = false;
@@ -1349,7 +1467,7 @@ void test_all_sensors(){
  ***********************************************************************/
 
 void create_teams(vector<Rover>* p_rover, int numNN){
-    bool verbose = true;
+    bool verbose = false;
     bool print_text = true;
     if (verbose) {
         cout<<"This are team numbers<<<"<<endl;
@@ -1453,20 +1571,21 @@ void set_teams_to_inital(vector<Rover>* p_rover, int numNN){
  Same old EA
  **************************************************************************/
 
-//void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
-//    for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
-//        vector<unsigned> a;
-//        for (int neural_network =0; neural_network < (number_of_neural_network/2); neural_network++) {
-//            int R = rand()%teamRover->at(rover_number).network_for_agent.size();
-//            Net N(a);
-//            N = teamRover->at(rover_number).network_for_agent.at(R);
-//            N.mutate();
-//            teamRover->at(rover_number).network_for_agent.push_back(N);
-//        }
-//        assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
-//    }
-//}
+void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
+    for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
+        vector<unsigned> a;
+        for (int neural_network =0; neural_network < (number_of_neural_network/2); neural_network++) {
+            int R = rand()%teamRover->at(rover_number).network_for_agent.size();
+            Net N(a);
+            N = teamRover->at(rover_number).network_for_agent.at(R);
+            N.mutate();
+            teamRover->at(rover_number).network_for_agent.push_back(N);
+        }
+        assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
+    }
+}
 
+/*
 void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
     for (int rover_number =0; rover_number < teamRover->size(); rover_number++) {
         //vector<unsigned> a;
@@ -1482,7 +1601,7 @@ void repopulate(vector<Rover>* teamRover,int number_of_neural_network){
         assert(teamRover->at(rover_number).network_for_agent.size() == number_of_neural_network);
     }
 }
-
+*/
 void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives,int reward_number){
     bool verbose = false;
     
@@ -1617,6 +1736,13 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
 }
 
 
+void set_rover_to_init(vector<Rover>* teamRover){
+    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
+        teamRover->at(rover_number).x_position = teamRover->at(rover_number).x_position_vec.at(0);
+        teamRover->at(rover_number).y_position = teamRover->at(rover_number).y_position_vec.at(0);
+        teamRover->at(rover_number).theta = 0.0;
+    }
+}
 
 /********************************************************************************
  simulation: Following things happen here and flow is same
@@ -1702,6 +1828,36 @@ void simulation_new_version( vector<Rover>* teamRover, POI* individualPOI,double
     }
     
     //fclose(p_xy);
+}
+
+//Jan28 2018
+
+void simulation_2(vector<Rover>* teamRover, POI* individualPOI, double scaling_number, int team_number){
+    //Index_number contains index of each team in each rover
+    vector<int> index_number;
+    vector<int>* p_index_number = &index_number;
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            if (teamRover->at(rover_number).network_for_agent.at(policy).my_team_number == team_number) {
+                index_number.push_back(policy);
+            }
+        }
+    }
+    assert(index_number.size() == teamRover->size());
+    
+    //Set everything to initial condition
+    set_rover_to_init(teamRover);
+    
+    //Simulation
+    for (int time_step = 0 ; time_step < 500; time_step++) {
+        for (int current_rover = 0 ; current_rover < index_number.size(); current_rover++) {
+            
+            //reset sensors
+            //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
+            teamRover->at(current_rover).reset_sensors(); // Reset all sensors
+            teamRover->at(current_rover).sense_values(individualPOI->x_position_poi_vec, individualPOI->y_position_poi_vec, individualPOI->value_poi_vec,p_index_number, current_rover,teamRover);// sense all values
+        }
+    }
 }
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
@@ -1839,12 +1995,6 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     
 }
 
-void set_rover_to_init(vector<Rover>* teamRover){
-    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
-        teamRover->at(rover_number).x_position = teamRover->at(rover_number).x_position_vec.at(0);
-        teamRover->at(rover_number).y_position = teamRover->at(rover_number).y_position_vec.at(0);
-    }
-}
 
 /***************************
  Main
@@ -1855,7 +2005,9 @@ int main(int argc, const char * argv[]) {
     bool print_text = false;
     srand((unsigned)time(NULL));
     if (test_simulation) {
+        for(int i=0;i <100;i++){
         test_all_sensors();
+        }
         cout<<"All Test"<<endl;
     }
     
@@ -1968,11 +2120,9 @@ int main(int argc, const char * argv[]) {
                     }
                 }
             
-                for (int rover_number = 0 ; rover_number < p_rover->size(); rover_number++) {
-                    for (int policy = 0 ; policy < teamRover.at(rover_number).network_for_agent.size(); policy++) {
-                        simulation_new_version(p_rover, p_poi, scaling_number, policy, rover_number,generation);
-                    }
-                }
+            for (int team_number =0  ; team_number < numNN; team_number++) {
+                simulation_2(p_rover, p_poi,scaling_number, team_number);
+            }
             
             //closest distance
             /*FILE* p_closest_distance;
@@ -1985,7 +2135,7 @@ int main(int argc, const char * argv[]) {
                     fprintf(p_closest_distance, "\n");
                 }
             }
-            fclose(p_closest_distance);*/
+            fclose(p_closest_distance);
                 calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
             
             
@@ -2006,6 +2156,8 @@ int main(int argc, const char * argv[]) {
             teamRover.at(nn).network_for_agent.clear();
         }
         teamRover.clear();
+             */
+    }
     }
     return 0;
 }
