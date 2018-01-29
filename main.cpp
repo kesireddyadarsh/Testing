@@ -1857,7 +1857,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 4;
+        int number_of_rovers = 8;
         int number_of_poi = number_of_rovers*5;
         int number_of_objectives = 2;
         
@@ -1895,6 +1895,11 @@ int main(int argc, const char * argv[]) {
         for (int i=0 ; i<number_of_rovers; i++) {
             teamRover.at(i).x_position_vec.push_back(0+(0.5*i));
             teamRover.at(i).y_position_vec.push_back(0);
+        }
+        
+        for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
+            teamRover.at(rover_number).x_position = teamRover.at(rover_number).x_position_vec.at(0);
+            teamRover.at(rover_number).y_position = teamRover.at(rover_number).y_position_vec.at(0);
         }
         
         assert(teamRover.size() == number_of_rovers);
