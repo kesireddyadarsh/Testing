@@ -326,9 +326,6 @@ double Rover::sense_rover_delta(double x_position_otherrover, double y_position_
 
 double Rover::sense_rover_new(double current_x, double current_y, double x_position_otherrover, double y_position_otherrover){
     double delta_sense_rover=0.0;
-    if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
-        return delta_sense_rover;
-    }
     double distance = sqrt(pow(current_x-x_position_otherrover, 2)+pow(current_y-y_position_otherrover, 2));
     delta_sense_rover=(1/distance);
     
@@ -521,11 +518,6 @@ void Rover::sense_values(vector<double> x_position_poi_vec_rover,vector<double> 
     int new_temp_quad_value =0;
     vector<double> new_temp_quad_vec;
     
-    //for (int value_calculating_delta = 0 ; value_calculating_delta < x_position_poi_vec_rover.size(); value_calculating_delta++) {
-      //  temp_delta_value = sense_poi_delta(x_position_poi_vec_rover.at(value_calculating_delta), y_position_poi_vec_rover.at(value_calculating_delta));
-        //temp_delta_vec.push_back(temp_delta_value);
-    //}
-    
     for (int other_rover = 0; other_rover < p_index_number->size(); other_rover++) {
         if (current_number != other_rover) {
             //x and y coordinates
@@ -543,7 +535,7 @@ void Rover::sense_values(vector<double> x_position_poi_vec_rover,vector<double> 
     }
     
     for (int update_sensor = 0 ; update_sensor<new_temp_quad_vec.size(); update_sensor++) {
-        sensors.at(new_temp_quad_vec.at(update_sensor)) += value_poi_vec_rover.at(update_sensor)/temp_delta_vec.at(update_sensor);
+        sensors.at(new_temp_quad_vec.at(update_sensor)) += new_temp_delta_vec.at(update_sensor);
     }
 }
 
