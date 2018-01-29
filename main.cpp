@@ -1349,8 +1349,8 @@ void test_all_sensors(){
  ***********************************************************************/
 
 void create_teams(vector<Rover>* p_rover, int numNN){
-    bool verbose = false;
-    bool print_text = false;
+    bool verbose = true;
+    bool print_text = true;
     if (verbose) {
         cout<<"This are team numbers<<<"<<endl;
         for (int rover_number = 0; rover_number < p_rover->size(); rover_number++) {
@@ -1839,7 +1839,12 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     
 }
 
-
+void set_rover_to_init(vector<Rover>* teamRover){
+    for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
+        teamRover->at(rover_number).x_position = teamRover->at(rover_number).x_position_vec.at(0);
+        teamRover->at(rover_number).y_position = teamRover->at(rover_number).y_position_vec.at(0);
+    }
+}
 
 /***************************
  Main
@@ -1897,29 +1902,27 @@ int main(int argc, const char * argv[]) {
             teamRover.at(i).y_position_vec.push_back(0);
         }
         
-        for (int rover_number = 0; rover_number < teamRover.size(); rover_number++) {
-            teamRover.at(rover_number).x_position = teamRover.at(rover_number).x_position_vec.at(0);
-            teamRover.at(rover_number).y_position = teamRover.at(rover_number).y_position_vec.at(0);
-        }
+        set_rover_to_init(p_rover);
         
         assert(teamRover.size() == number_of_rovers);
         
-        FILE* p_print_poi;
-        p_print_poi = fopen("POI Location", "a");
-        for (int poi_location = 0 ; poi_location < number_of_poi; poi_location++) {
-            fprintf(p_print_poi, "%f \t %f \t %f\n", individualPOI.x_position_poi_vec.at(poi_location),individualPOI.y_position_poi_vec.at(poi_location),individualPOI.value_poi_vec.at(poi_location));
+        bool print_locations = true;
+        if (print_locations) {
+            FILE* p_print_poi;
+            p_print_poi = fopen("POI Location", "a");
+            for (int poi_location = 0 ; poi_location < number_of_poi; poi_location++) {
+                fprintf(p_print_poi, "%f \t %f \t %f\n", individualPOI.x_position_poi_vec.at(poi_location),individualPOI.y_position_poi_vec.at(poi_location),individualPOI.value_poi_vec.at(poi_location));
+            }
+            fprintf(p_print_poi, "\n");
+            for (int rover_number = 0 ; rover_number < teamRover.size(); rover_number++) {
+                fprintf(p_print_poi, "%f \t %f \n",teamRover.at(rover_number).x_position,teamRover.at(rover_number).y_position);
+            }
+            fclose(p_print_poi);
         }
-        fprintf(p_print_poi, "\n");
-        for (int rover_number = 0 ; rover_number < teamRover.size(); rover_number++) {
-            fprintf(p_print_poi, "%f \t %f \n",teamRover.at(rover_number).x_position,teamRover.at(rover_number).y_position);
-        }
-        fclose(p_print_poi);
-        
-       
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 100;
+        int numNN = 10;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
