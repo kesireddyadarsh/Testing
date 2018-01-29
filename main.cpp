@@ -1848,6 +1848,34 @@ void simulation_2(vector<Rover>* teamRover, POI* individualPOI, double scaling_n
             //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
             teamRover->at(current_rover).reset_sensors(); // Reset all sensors
             teamRover->at(current_rover).sense_values(individualPOI->x_position_poi_vec, individualPOI->y_position_poi_vec, individualPOI->value_poi_vec,p_index_number, current_rover,teamRover);// sense all values
+            
+            //Change of input values
+            for (int change_sensor_values = 0 ; change_sensor_values <teamRover->at(current_rover).sensors.size(); change_sensor_values++) {
+                teamRover->at(current_rover).sensors.at(change_sensor_values) /= scaling_number;
+            }
+            
+            teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).feedForward(teamRover->at(current_rover).sensors); // scaled input into neural network
+            for (int change_sensor_values = 0 ; change_sensor_values <teamRover->at(current_rover).sensors.size(); change_sensor_values++) {
+                assert(!isnan(teamRover->at(current_rover).sensors.at(change_sensor_values)));
+            }
+            
+            double dx = teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).outputvaluesNN.at(0);
+            double dy = teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).outputvaluesNN.at(1);
+            teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).outputvaluesNN.clear();
+            
+            assert(!isnan(dx));
+            assert(!isnan(dy));
+            teamRover->at(current_rover).move_rover(dx, dy);
+            
+            for (int cal_dis =0; cal_dis<individualPOI->value_poi_vec.size(); cal_dis++) {
+                double x_distance_cal =((teamRover->at(current_rover).x_position) -(individualPOI->x_position_poi_vec.at(cal_dis)));
+                double y_distance_cal = ((teamRover->at(current_rover).y_position) -(individualPOI->y_position_poi_vec.at(cal_dis)));
+                double distance = sqrt((x_distance_cal*x_distance_cal)+(y_distance_cal*y_distance_cal));
+                if (teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).closest_dist_to_poi.at(cal_dis) > distance) {
+                    teamRover->at(current_rover).network_for_agent.at(index_number.at(current_rover)).closest_dist_to_poi.at(cal_dis) = distance ;
+                }
+            }
+            
         }
     }
 }
