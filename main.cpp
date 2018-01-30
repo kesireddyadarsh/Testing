@@ -119,6 +119,7 @@ public:
     //CCEA
     double fitness;
     vector<double> closest_dist_to_poi;
+    vector<double> objective_value;
     
     //For team
     
@@ -1916,6 +1917,8 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             }
             teamRover->at(rover_number).network_for_agent.at(policy).local_reward_wrt_team = temp_local_reward;
         }
+        
+        
     }
     
     //Global reward
@@ -2010,18 +2013,19 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     //    }
     //}
     
-//    FILE* p_rewards;
-//    p_rewards = fopen("Rewards", "a");
-//    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
-//        for (int policy_number = 0 ; policy_number< teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
-//            fprintf(p_rewards, "%f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
-//        }
-//    }
-//    fprintf(p_rewards, "\n");
-//    fclose(p_rewards);
-//    
+    bool print_reward = true;
     
-    
+    if (print_reward) {
+        FILE* p_rewards;
+        p_rewards = fopen("Rewards", "a");
+        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int policy_number = 0 ; policy_number< teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
+                fprintf(p_rewards, "%d \t %f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).my_team_number,teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
+            }
+        }
+        fprintf(p_rewards, "\n");
+        fclose(p_rewards);
+    }
 }
 
 
@@ -2043,7 +2047,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 8;
+        int number_of_rovers = 2;
         int number_of_poi = number_of_rovers*5;
         int number_of_objectives = 2;
         
@@ -2179,6 +2183,8 @@ int main(int argc, const char * argv[]) {
                 }
             }
             
+            calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
+            
             //closest distance
             /*FILE* p_closest_distance;
             p_closest_distance = fopen("Closest_dstance.txt","a");
@@ -2191,7 +2197,7 @@ int main(int argc, const char * argv[]) {
                 }
             }
             fclose(p_closest_distance);
-                calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
+             
             
             
                 FILE* p_local;
