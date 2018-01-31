@@ -119,7 +119,7 @@ public:
     //CCEA
     double fitness;
     vector<double> closest_dist_to_poi;
-    vector<double> objective_value;
+    vector<double> objective_values;
     
     //For team
     
@@ -1901,7 +1901,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             }
         }
     }
-    
+
     
     //Total Local reward
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
@@ -2026,6 +2026,31 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         fprintf(p_rewards, "\n");
         fclose(p_rewards);
     }
+    
+    vector<vector<int>> team_index_numbers;
+    vector<int> temp_index;
+    
+    for (int rover_number = 0; rover_number < 1; rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(0).network_for_agent.size(); policy++) {
+            temp_index.push_back(policy);
+            for (int other_rover = 0 ; other_rover < teamRover->size(); other_rover++) {
+                if (other_rover != rover_number) {
+                    for (int other_policy = 0 ; other_policy < teamRover->at(other_rover).network_for_agent.size(); other_policy++) {
+                        if (teamRover->at(other_rover).network_for_agent.at(other_policy).my_team_number == teamRover->at(rover_number).network_for_agent.at(policy).my_team_number) {
+                            //Other policy index is what required
+                            temp_index.push_back(other_policy);
+                        }
+                    }
+                }
+            }
+            assert(temp_index.size() == teamRover->size());
+            team_index_numbers.push_back(temp_index);
+            temp_index.clear();
+        }
+    }
+    
+    assert(team_index_numbers.size() == teamRover->size()/2);
+    
 }
 
 
