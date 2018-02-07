@@ -2057,20 +2057,31 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     }
     assert(poi_values.size() == individualPOI->value_poi_vec.size());
     
+   
+    vector<vector<int>> teams;
+    vector<int> temp;
+    for (int team_number = 0 ; team_number <numNN; team_number++) {
+        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+                if (teamRover->at(rover_number).network_for_agent.at(policy).my_team_number == team_number) {
+                    temp.push_back(policy);
+                }
+            }
+        }
+        teams.push_back(temp);
+        temp.clear();
+    }
+    
     //Calculate
     
     /*******************************************************
      
      ******************************************************/
-    for (int team_number = 0 ; team_number < numNN; team_number++) {
-        
-        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+    for (int objective = 0 ; objective < number_of_objectives; objective++) {
+        for (int poi_objective = 0 ; poi_objective < p_poi_index->at(number_of_objectives).size(); poi_objective++) {
             
         }
     }
-    
-    
-    
 }
 
 
