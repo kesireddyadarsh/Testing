@@ -1889,7 +1889,7 @@ void simulation_2(vector<Rover>* teamRover, POI* individualPOI, double scaling_n
     }
 }
 
-void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives){
+void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives,vector<vector<int>>* p_poi_index){
     
     //Closest distance calculation on 1
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
@@ -2048,7 +2048,6 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             temp_index.clear();
         }
     }
-    
     assert(team_index_numbers.size() == numNN);
     
     //First find the number of points with same objective values and POI values
@@ -2058,28 +2057,17 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     }
     assert(poi_values.size() == individualPOI->value_poi_vec.size());
     
-    vector<double> count;
-    vector<vector<double>> poi_index;
-    for (int i =0 ; i < poi_values.size(); i++) {
-        double temp = poi_values.at(i);
-        double ref_value;
-
-        vector<double> temp_i;
-        int count_t = 0 ;
-        for (int j = 0; j< poi_values.size(); j++) {
-            if (poi_values.at(j) == temp) {
-                count_t++;
-                temp_i.push_back(j);
-            }
+    //Calculate
+    
+    /*******************************************************
+     
+     ******************************************************/
+    for (int team_number = 0 ; team_number < numNN; team_number++) {
+        
+        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+            
         }
-        count.push_back(count_t);
-        poi_index.push_back(temp_i);
     }
-    
-    assert(poi_index.size() == individualPOI->value_poi_vec.size());
-    cout<<"ptin"<<endl;
-    
-    
     
     
     
@@ -2112,6 +2100,11 @@ int main(int argc, const char * argv[]) {
         POI individualPOI;
         POI* p_poi = &individualPOI;
         
+        vector<int> temp_index;
+        vector<int>* p_temp = &temp_index;
+        vector<vector<int>> poi_index;
+        vector<vector<int>>* p_poi_index = &poi_index;
+        
         for (int poi_location = 0; poi_location < number_of_poi; poi_location++) {
             double rand_1 = random_global(100);
             double rand_2 = random_global(100);
@@ -2120,8 +2113,19 @@ int main(int argc, const char * argv[]) {
             individualPOI.y_position_poi_vec.push_back(rand_2);
             if (poi_location < number_of_poi/2) {
                 individualPOI.value_poi_vec.push_back(100.0);
+                temp_index.push_back(poi_location);
             }else{
                 individualPOI.value_poi_vec.push_back(50.0);
+                temp_index.push_back(poi_location);
+            }
+            
+            if (poi_location == ((number_of_poi/2)-1)) {
+                p_poi_index->push_back(temp_index);
+                temp_index.clear();
+            }
+            if(poi_location == (number_of_poi - 1) ){
+                p_poi_index->push_back(temp_index);
+                temp_index.clear();
             }
         }
         
@@ -2240,41 +2244,8 @@ int main(int argc, const char * argv[]) {
                 }
             }
             
-            calculate_rewards(p_rover,p_poi,numNN,number_of_objectives);
+            calculate_rewards(p_rover,p_poi,numNN,number_of_objectives,p_poi_index);
             
-            //closest distance
-            /*FILE* p_closest_distance;
-            p_closest_distance = fopen("Closest_dstance.txt","a");
-            for (int rover_number = 0 ; rover_number < teamRover.size(); rover_number++) {
-                for (int policy_number = 0 ; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
-                    for (int closest_distance = 0 ; closest_distance < teamRover.at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.size(); closest_distance++) {
-                        fprintf(p_closest_distance, "%f \t",teamRover.at(rover_number).network_for_agent.at(policy_number).closest_dist_to_poi.at(closest_distance));
-                    }
-                    fprintf(p_closest_distance, "\n");
-                }
-            }
-            fclose(p_closest_distance);
-             
-            
-            
-                FILE* p_local;
-                p_local = fopen("Global_combined.txt", "a");
-                for (int rover_number =0 ; rover_number < 1; rover_number++) {
-                    for (int policy_number =0; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
-                        fprintf(p_local, "%f \t", teamRover.at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team);
-                    }
-                    fprintf(p_local, "\n");
-                }
-                fclose(p_local);
-            
-                //ccea(p_rover,p_poi,numNN,number_of_objectives,reward_number);
-            
-            }
-        for (int nn = 0 ; nn < teamRover.size(); nn++) {
-            teamRover.at(nn).network_for_agent.clear();
-        }
-        teamRover.clear();
-             */
     }
     }
     return 0;
