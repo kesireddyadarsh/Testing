@@ -2089,6 +2089,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             for (int poi = 0; poi < p_poi_index->at(objective).size(); poi++) {
                 double closest_value = 0.0;
                 for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
+                    //cout<<teams.at(team_number).at(rover_number)<<endl;
                     if (rover_number == 0) {
                         closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi);
                     }
@@ -2096,7 +2097,9 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                         closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi);
                     }
                 }
-                objective_value += (individualPOI->value_poi_vec.at(poi)/closest_value);
+                //cout<<individualPOI->value_poi_vec.at(poi)<<endl;
+                //cout<<individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))<<endl;
+                objective_value += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/closest_value);
             }
             for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
                 teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).global_objective_values.push_back(objective_value);
@@ -2112,7 +2115,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             for (int objective = 0 ; objective < number_of_objectives; objective++) {
                 double objective_value = 0.0;
                 for (int poi = 0; poi < p_poi_index->at(objective).size(); poi++) {
-                    objective_value += (individualPOI->value_poi_vec.at(poi)/teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi)) ;
+                    objective_value += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi)) ;
                 }
                 teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).local_objective_values.push_back(objective_value);
             }
@@ -2129,8 +2132,8 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                 for (int poi = 0 ; poi < p_poi_index->at(objective).size(); poi++) {
                     vector<double> distance_v;
                     for (int other_rover = 0 ; other_rover < teams.at(team_number).size(); other_rover++) {
-                        if (teams.at(team_number).at(rover) != teams.at(team_number).at(other_rover)) {
-                            distance_v.push_back(teamRover->at(team_number).network_for_agent.at(teams.at(team_number).at(other_rover)).closest_dist_to_poi.at(poi));
+                        if (rover != other_rover) {
+                            distance_v.push_back(teamRover->at(other_rover).network_for_agent.at(teams.at(team_number).at(other_rover)).closest_dist_to_poi.at(poi));
                         }
                     }
                     double dis;
@@ -2142,12 +2145,18 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                             dis = distance_v.at(index);
                         }
                     }
-                    objective_v += (individualPOI->value_poi_vec.at(poi)/dis);
+                    assert(distance_v.size() == teamRover->size()-1);
+                    objective_v += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/dis);
                     distance_v.clear();
                 }
                 teamRover->at(rover).network_for_agent.at(teams.at(team_number).at(rover)).difference_objective_values.push_back(objective_v);
             }
         }
+        
+        for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
+            assert(teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).difference_objective_values.size() == number_of_objectives);
+        }
+        
     }
     
     
