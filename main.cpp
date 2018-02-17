@@ -2159,8 +2159,29 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         
     }
     
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            assert(teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size() == teamRover->at(rover_number).network_for_agent.at(policy).local_objective_values.size());
+            assert(teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size() == teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.size());
+        }
+    }
     
+    bool print_cal = true;
     
+    if (print_cal) {
+        FILE* p_cal;
+        p_cal = fopen("Calculations", "a");
+        for (int rover_number =0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+                for (int index = 0; index < teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.size(); index++) {
+                    fprintf(p_cal,"%f \t %f \t %f \n", teamRover->at(rover_number).network_for_agent.at(policy).local_objective_values.at(index),teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.at(index),teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(index));
+                }
+                fprintf(p_cal, "\n");
+            }
+            fprintf(p_cal, "\n");
+        }
+        fclose(p_cal);
+    }
 }
 
 
