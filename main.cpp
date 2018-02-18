@@ -139,6 +139,10 @@ public:
     //Testing CCEA
     bool for_testing = false;
     double best_value_so_far;
+    
+    //NSGA-II
+    vector<double> dominating_over;
+    double dominating_me;
 };
 
 Net::Net(vector<unsigned> topology){
@@ -1893,6 +1897,17 @@ void simulation_2(vector<Rover>* teamRover, POI* individualPOI, double scaling_n
 
 void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_objectives,vector<vector<int>>* p_poi_index){
     
+    bool verbose = false;
+    if (verbose) {
+        //Making sure POI values are correct.
+        for (int objective = 0 ; objective < number_of_objectives; objective++) {
+            for (int poi = 0 ; poi < p_poi_index->at(objective).size(); poi++) {
+                cout<<p_poi_index->at(objective).at(poi)<<"\t" << individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))<<"\n";
+            }
+            cout<<endl;
+        }
+    }
+    
     //Closest distance calculation on 1
     for (int rover_number = 0; rover_number < teamRover->size(); rover_number++) {
         for (int policy_number = 0; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
@@ -2082,8 +2097,13 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     //Calculate
     // Run per objective. Then go for team number. For each team find out all the calculations like local, global and Difference
     //In this loop calculate local global difference with each objective
+//    FILE* p_l;
+//    p_l = fopen("ManualTest", "a");
+    
     for (int team_number = 0 ; team_number < teams.size(); team_number++) {
+//        fprintf(p_l, "Team Number \t :%d \n",team_number);
         // Calculating global reward
+//        fprintf(p_l, "Global Reward \n");
         for (int objective = 0 ; objective < number_of_objectives; objective++) {
             double objective_value = 0.0;
             for (int poi = 0; poi < p_poi_index->at(objective).size(); poi++) {
@@ -2091,19 +2111,21 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                 for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
                     //cout<<teams.at(team_number).at(rover_number)<<endl;
                     if (rover_number == 0) {
-                        closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi);
+                        closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(p_poi_index->at(objective).at(poi));
                     }
-                    if (closest_value > teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi) ) {
-                        closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi);
+                    if (closest_value > teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(p_poi_index->at(objective).at(poi)) ) {
+                        closest_value = teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(p_poi_index->at(objective).at(poi));
                     }
                 }
                 //cout<<individualPOI->value_poi_vec.at(poi)<<endl;
                 //cout<<individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))<<endl;
                 objective_value += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/closest_value);
+//                fprintf(p_l, "%f \n",closest_value);
             }
             for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
                 teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).global_objective_values.push_back(objective_value);
             }
+//            fprintf(p_l, "\n");
         }
         
         for (int rover_number = 0 ; rover_number < teams.at(team_number).size(); rover_number++) {
@@ -2115,7 +2137,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
             for (int objective = 0 ; objective < number_of_objectives; objective++) {
                 double objective_value = 0.0;
                 for (int poi = 0; poi < p_poi_index->at(objective).size(); poi++) {
-                    objective_value += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(poi)) ;
+                    objective_value += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).closest_dist_to_poi.at(p_poi_index->at(objective).at(poi))) ;
                 }
                 teamRover->at(rover_number).network_for_agent.at(teams.at(team_number).at(rover_number)).local_objective_values.push_back(objective_value);
             }
@@ -2126,6 +2148,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         }
         
         //Calculating difference reward
+//        fprintf(p_l, "Difference Reward \n");
         for (int rover = 0 ; rover <teams.at(team_number).size(); rover++) {
             for (int objective = 0 ; objective < number_of_objectives; objective++) {
                 double objective_v =0.0;
@@ -2133,7 +2156,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                     vector<double> distance_v;
                     for (int other_rover = 0 ; other_rover < teams.at(team_number).size(); other_rover++) {
                         if (rover != other_rover) {
-                            distance_v.push_back(teamRover->at(other_rover).network_for_agent.at(teams.at(team_number).at(other_rover)).closest_dist_to_poi.at(poi));
+                            distance_v.push_back(teamRover->at(other_rover).network_for_agent.at(teams.at(team_number).at(other_rover)).closest_dist_to_poi.at(p_poi_index->at(objective).at(poi)));
                         }
                     }
                     double dis;
@@ -2146,6 +2169,9 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
                         }
                     }
                     assert(distance_v.size() == teamRover->size()-1);
+//                    for (int t = 0; t< distance_v.size(); t++) {
+//                        fprintf(p_l, "%f \n",distance_v.at(t));
+//                    }
                     objective_v += (individualPOI->value_poi_vec.at(p_poi_index->at(objective).at(poi))/dis);
                     distance_v.clear();
                 }
@@ -2158,6 +2184,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
         }
         
     }
+//    fclose(p_l);
     
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
@@ -2184,6 +2211,49 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     }
 }
 
+void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
+            //For this policy check with other policies
+            for (int other_policy =  0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
+                if (policy != other_policy) {
+                    for (int objective = 0 ; objective < number_of_objectives; objective++) {
+                        if (teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.at(objective) > teamRover->at(rover_number).network_for_agent.at(other_policy).global_objective_values.at(objective)) {
+                            teamRover->at(rover_number).network_for_agent.at(policy).dominating_over.push_back(other_policy);
+                        }else{
+                            teamRover->at(rover_number).network_for_agent.at(policy).dominating_me++;
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+}
+
+void hof(vector<Rover>* teamRover,int number_of_objectives){
+    
+}
+
+
+void perform_mo(vector<Rover>* teamRover,int number_of_objectives){
+    //case_number
+    //1 NSGA-II
+    //2 HOF
+    int case_number = 1;
+    switch (case_number) {
+        case 1:
+            nsga_ii(teamRover,number_of_objectives);
+            break;
+        case 2:
+            hof(teamRover,number_of_objectives);
+            break;
+            
+        default:
+            break;
+    }
+}
 
 /***************************
  Main
@@ -2355,6 +2425,7 @@ int main(int argc, const char * argv[]) {
             }
             
             calculate_rewards(p_rover,p_poi,numNN,number_of_objectives,p_poi_index);
+            perform_mo(p_rover,number_of_objectives);
             
     }
     }
