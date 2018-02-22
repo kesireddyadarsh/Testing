@@ -2215,7 +2215,7 @@ void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
             teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
-            //For this policy check with other policies
+            //For this policy check with other policies with in same rover
             for (int other_policy =  0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
                 if (policy != other_policy) {
                     for (int objective = 0 ; objective < number_of_objectives; objective++) {
@@ -2227,9 +2227,10 @@ void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
                     }
                 }
             }
-            
         }
     }
+    
+    
 }
 
 void hof(vector<Rover>* teamRover,int number_of_objectives){
@@ -2348,7 +2349,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 10;
+        int numNN = 100;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
@@ -2425,7 +2426,7 @@ int main(int argc, const char * argv[]) {
             }
             
             calculate_rewards(p_rover,p_poi,numNN,number_of_objectives,p_poi_index);
-            perform_mo(p_rover,number_of_objectives);
+//            perform_mo(p_rover,number_of_objectives);
             
     }
     }
