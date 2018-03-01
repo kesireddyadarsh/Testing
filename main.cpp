@@ -16,6 +16,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+# include <math.h>
+#include <list>
+
+
 
 
 using namespace std;
@@ -141,8 +145,13 @@ public:
     double best_value_so_far;
     
     //NSGA-II
-    vector<double> dominating_over;
+    vector<int> dominating_over;
     double dominating_me;
+    double crowding_distance;
+    vector<vector<double>> front;
+    vector<vector<double>> dominate;
+    vector<double> num_donimated;
+    double rank;
 };
 
 Net::Net(vector<unsigned> topology){
@@ -2211,26 +2220,140 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     }
 }
 
-void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
-    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
-        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
-            teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
-            //For this policy check with other policies with in same rover
-            for (int other_policy =  0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
-                if (policy != other_policy) {
-                    for (int objective = 0 ; objective < number_of_objectives; objective++) {
-                        if (teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.at(objective) > teamRover->at(rover_number).network_for_agent.at(other_policy).global_objective_values.at(objective)) {
-                            teamRover->at(rover_number).network_for_agent.at(policy).dominating_over.push_back(other_policy);
-                        }else{
-                            teamRover->at(rover_number).network_for_agent.at(policy).dominating_me++;
-                        }
+
+/* Routine for usual non-domination checking
+ It will return the following values
+ 1 if policy dominates other_policy
+ -1 if other_policy dominates policy
+ 0 if both policy and other_policy are non-dominated */
+
+int check_domination(int rover_number,int policy,int other_policy,vector<Rover>* teamRover){
+    
+    assert(teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size() == teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.size());
+    
+    bool verbose = true;
+    if (verbose) {
+        for (int objective = 0 ; objective < teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size(); objective++) {
+            cout<<teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective)<<"\t"<<teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective)<<endl;
+        }
+    }
+    
+    //true means that value is better
+    vector<bool> first_policy,second_policy;
+    for (int i = 0 ; i< teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size(); i++) {
+        first_policy.push_back(false);
+        second_policy.push_back(false);
+    }
+    
+    for (int objective = 0 ; objective < teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size(); objective++) {
+        if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) <0 && teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective) < 0) {
+            if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) >teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective)) {
+                //policy is better
+                first_policy.at(objective) = true;
+            }else{
+                if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) < teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective)) {
+                    //other policy is better
+                    second_policy.at(objective) = true;
+                }else{
+                    //Both are non dominated
+                }
+            }
+            
+        }else{
+            if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) < 0 && teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective) == 0) {
+                //Other policy is better
+                second_policy.at(objective) = true;
+            }else if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) == 0 && teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective) < 0) {
+                    //policy is better
+                first_policy.at(objective) = true;
+                }else{
+                    //Here we are comparing both negatives
+                    if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) > teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective)) {
+                        //other policy is better
+                        second_policy.at(objective) = true;
+                    }else if (teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective) < teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective)) {
+                        // policy is better
+                        first_policy.at(objective) = true;
+                    }else{
+                        //Both are non dominated
                     }
                 }
+        }
+    }
+    bool first_all = true;
+    bool second_all = true;
+    for (int i = 0 ; i < first_policy.size(); i++) {
+        if (first_policy.at(i) ) {
+            first_all = false;
+        }
+        if (second_policy.at(i)) {
+            second_all = false;
+        }
+    }
+    
+    if (first_all) {
+        return 1;
+    }else if (second_all){
+        return -1;
+    }
+    
+    return 0;
+    
+}
+
+void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
+    
+    cout<< "In Fitness assignemnet function "<<endl;
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            teamRover->at(rover_number).network_for_agent.at(policy).front.clear();
+            teamRover->at(rover_number).network_for_agent.at(policy).dominate.clear();
+            teamRover->at(rover_number).network_for_agent.at(policy).num_donimated.clear();
+        }
+    }
+    
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            teamRover->at(rover_number).network_for_agent.at(policy).front.push_back(vector<double>  (0));
+            teamRover->at(rover_number).network_for_agent.at(policy).dominate.push_back(vector<double>  (0));
+            teamRover->at(rover_number).network_for_agent.at(policy).num_donimated.push_back(0);
+            teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
+        }
+    }
+    
+    
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for ( int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            for (int other_policy = 0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
+                if (policy != other_policy) {
+                    cout<<"Other policy"<<endl;
+                    int temp = check_domination(rover_number, policy,other_policy,teamRover);
+                    cout<< temp<<endl;
+                    if (temp == 1) {
+                        teamRover->at(rover_number).network_for_agent.at(policy).dominating_over.push_back(other_policy);
+                    }else if (temp == -1){
+                        teamRover->at(rover_number).network_for_agent.at(policy).dominating_me +=1;
+                    }else{
+                        
+                    }
+                    
+                }
+            }
+            if (teamRover->at(rover_number).network_for_agent.at(policy).dominating_me == 0) {
+                teamRover->at(rover_number).network_for_agent.at(policy).rank = 1;
             }
         }
     }
     
     
+}
+
+
+
+
+
+void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
+    fitness_assignment_fast_nondominated_sort(teamRover);
 }
 
 void hof(vector<Rover>* teamRover,int number_of_objectives){
@@ -2255,6 +2378,8 @@ void perform_mo(vector<Rover>* teamRover,int number_of_objectives){
             break;
     }
 }
+
+
 
 /***************************
  Main
@@ -2426,7 +2551,7 @@ int main(int argc, const char * argv[]) {
             }
             
             calculate_rewards(p_rover,p_poi,numNN,number_of_objectives,p_poi_index);
-//            perform_mo(p_rover,number_of_objectives);
+            perform_mo(p_rover,number_of_objectives);
             
     }
     }
