@@ -147,6 +147,8 @@ public:
     //NSGA-II
     vector<int> dominating_over;
     double dominating_me;
+    bool already_have_front;
+    int front_number;
     double crowding_distance;
     vector<vector<double>> front;
     vector<vector<double>> dominate;
@@ -2231,7 +2233,7 @@ int check_domination(int rover_number,int policy,int other_policy,vector<Rover>*
     
     assert(teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size() == teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.size());
     
-    bool verbose = true;
+    bool verbose = false;
     if (verbose) {
         for (int objective = 0 ; objective < teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.size(); objective++) {
             cout<<teamRover->at(rover_number).network_for_agent.at(policy).difference_objective_values.at(objective)<<"\t"<<teamRover->at(rover_number).network_for_agent.at(other_policy).difference_objective_values.at(objective)<<endl;
@@ -2301,6 +2303,42 @@ int check_domination(int rover_number,int policy,int other_policy,vector<Rover>*
     
 }
 
+/*
+ fronts = Array.new(1){[]}
+ pop.each do |p1|
+ p1[:dom_count], p1[:dom_set] = 0, []
+ pop.each do |p2|
+ if dominates(p1, p2)
+ p1[:dom_set] << p2
+ elsif dominates(p2, p1)
+ p1[:dom_count] += 1
+ end
+ end
+ if p1[:dom_count] == 0
+ p1[:rank] = 0
+ fronts.first << p1
+ end
+ end
+ curr = 0
+ begin
+ next_front = []
+ fronts[curr].each do |p1|
+ p1[:dom_set].each do |p2|
+ p2[:dom_count] -= 1
+ if p2[:dom_count] == 0
+ p2[:rank] = (curr+1)
+ next_front << p2
+ end
+ end
+ end
+ curr += 1
+ fronts << next_front if !next_front.empty?
+ end while curr < fronts.size
+ return fronts
+ */
+
+
+
 void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
     
     cout<< "In Fitness assignemnet function "<<endl;
@@ -2318,33 +2356,104 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
             teamRover->at(rover_number).network_for_agent.at(policy).dominate.push_back(vector<double>  (0));
             teamRover->at(rover_number).network_for_agent.at(policy).num_donimated.push_back(0);
             teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
+            teamRover->at(rover_number).network_for_agent.at(policy).already_have_front = false;
         }
     }
-    
-    
-    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
-        for ( int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
-            for (int other_policy = 0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
-                if (policy != other_policy) {
-                    cout<<"Other policy"<<endl;
-                    int temp = check_domination(rover_number, policy,other_policy,teamRover);
-                    cout<< temp<<endl;
-                    if (temp == 1) {
-                        teamRover->at(rover_number).network_for_agent.at(policy).dominating_over.push_back(other_policy);
-                    }else if (temp == -1){
-                        teamRover->at(rover_number).network_for_agent.at(policy).dominating_me +=1;
-                    }else{
-                        
+    vector<vector<vector<int>>> finial_front;
+    vector<vector<int>> front;
+    vector<int> temp_front;
+    bool next_fron = false;
+    do {
+        //bool next_fron = false;
+        for (int rover_number  = 0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+                for (int other_policy = 0 ; other_policy < teamRover->at(rover_number).network_for_agent.size(); other_policy++) {
+                    if( (policy != other_policy)&&(teamRover->at(rover_number).network_for_agent.at(policy).already_have_front == false)) {
+                        if (teamRover->at(rover_number).network_for_agent.at(other_policy).already_have_front == false) {
+                            int temp = check_domination(rover_number, policy,other_policy,teamRover);
+                            if (temp == 1) {
+                                teamRover->at(rover_number).network_for_agent.at(policy).dominating_over.push_back(other_policy);
+                            }else if (temp == -1){
+                                teamRover->at(rover_number).network_for_agent.at(policy).dominating_me +=1;
+                            }else{
+                                //Next level
+                                //next_fron = true;
+                            }
+                        }
                     }
-                    
+                }
+                if ((teamRover->at(rover_number).network_for_agent.at(policy).dominating_me == 0) && (teamRover->at(rover_number).network_for_agent.at(policy).already_have_front == false)) {
+                    temp_front.push_back(rover_number);
+                    temp_front.push_back(policy);
+                    teamRover->at(rover_number).network_for_agent.at(policy).rank = 1;
+                    teamRover->at(rover_number).network_for_agent.at(policy).already_have_front = true;
+                    front.push_back(temp_front);
+                    temp_front.clear();
+                }
+                teamRover->at(rover_number).network_for_agent.at(policy).dominating_me = 0;
+            }
+        }
+        
+        if (front.size()!= 0 ) {
+            finial_front.push_back(front);
+        }
+        front.clear();
+        
+        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+                if (teamRover->at(rover_number).network_for_agent.at(policy).already_have_front == false) {
+                    next_fron = true;
+                    break;
+                }else{
+                    next_fron = false;
                 }
             }
-            if (teamRover->at(rover_number).network_for_agent.at(policy).dominating_me == 0) {
-                teamRover->at(rover_number).network_for_agent.at(policy).rank = 1;
+            if (next_fron) {
+                break;
             }
+        }
+    } while (next_fron);
+    
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            assert(teamRover->at(rover_number).network_for_agent.at(policy).already_have_front == true);
         }
     }
     
+    FILE* p_front;
+    p_front =fopen("Front", "a");
+    for (int i=0; i< finial_front.size(); i++) {
+        for (int j= 0; j<finial_front.at(i).size(); j++) {
+            for (int k = 0; k< finial_front.at(i).at(j).size(); k++) {
+                fprintf(p_front, "%d \t",finial_front.at(i).at(j).at(k));
+            }
+            fprintf(p_front, "\n");
+        }
+        fprintf(p_front, "\n");
+    }
+    fclose(p_front);
+    
+    //Calculate Crowding distance
+    /*
+     Just keep working on distance. First we need to know points above and below.
+     Each front has some now
+     We have to do as per rover
+     */
+    
+    for (int front_number  = 0 ; front_number < finial_front.size(); front_number++) {
+        for (int current_index = 0 ; current_index < finial_front.at(front_number).size(); current_index++) {
+            int rover_number = finial_front.at(front_number).at(current_index).at(0);
+            vector<double> all_objective_distance;
+            for (int next_index = 0 ; next_index < finial_front.at(front_number).size(); next_index++) {
+                if ( (current_index != next_index) && (finial_front.at(front_number).at(next_index).at(0) == rover_number)) {
+                    for (int objective_number = 0 ; objective_number < teamRover->at(rover_number).network_for_agent.at(current_index).difference_objective_values.size(); objective_number++) {
+                        double objective_distance = teamRover->at(rover_number).network_for_agent.at(current_index).difference_objective_values.at(objective_number) - teamRover->at(rover_number).network_for_agent.at(next_index).difference_objective_values.at(objective_number);
+                        all_objective_distance.push_back(objective_distance);
+                    }
+                }
+            }
+        }
+    }
     
 }
 
@@ -2353,7 +2462,7 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
 
 
 void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
-    fitness_assignment_fast_nondominated_sort(teamRover);
+    fitness_assignment_fast_nondominated_sort(teamRover); // front is created
 }
 
 void hof(vector<Rover>* teamRover,int number_of_objectives){
@@ -2399,7 +2508,7 @@ int main(int argc, const char * argv[]) {
     if (run_simulation) {
         
         //First set up environment
-        int number_of_rovers = 4;
+        int number_of_rovers = 2;
         int number_of_poi = number_of_rovers*5;
         int number_of_objectives = 2;
         
@@ -2474,7 +2583,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN = 100;
+        int numNN = 10;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
@@ -2496,7 +2605,7 @@ int main(int argc, const char * argv[]) {
         
         
         //Generations
-        for(int generation =0 ; generation < 1 ;generation++){
+        for(int generation =0 ; generation < 10 ;generation++){
             
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
