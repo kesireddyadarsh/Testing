@@ -1558,7 +1558,7 @@ void create_teams(vector<Rover>* p_rover, int numNN){
     
     if (print_text) {
         FILE* p_print_text;
-        p_print_text = fopen("Teams", "a");
+        p_print_text = fopen("Teams.txt", "a");
         for (int rover_number = 0 ; rover_number < p_rover->size(); rover_number++) {
             for (int policy_number = 0 ; policy_number < p_rover->at(rover_number).network_for_agent.size(); policy_number++) {
                 fprintf(p_print_text, "%d \t", p_rover->at(rover_number).network_for_agent.at(policy_number).my_team_number);
@@ -1651,7 +1651,7 @@ void ccea(vector<Rover>* teamRover,POI* individualPOI, int numNN, int number_of_
         }
         
 //        FILE* p_global;
-//        p_global = fopen("Local", "a");
+//        p_global = fopen("Local.txt", "a");
 //        fprintf(p_global, "\n");
 //        for (int policy_number = 0 ; policy_number < teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
 //            fprintf(p_global, "%f \t",teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team);
@@ -2035,7 +2035,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     bool print_reward = true;
     if (print_reward) {
         FILE* p_rewards;
-        p_rewards = fopen("Rewards", "a");
+        p_rewards = fopen("Rewards.txt", "a");
         for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
             for (int policy_number = 0 ; policy_number< teamRover->at(rover_number).network_for_agent.size(); policy_number++) {
                 fprintf(p_rewards, "%d \t %f \t %f \t %f \n",teamRover->at(rover_number).network_for_agent.at(policy_number).my_team_number,teamRover->at(rover_number).network_for_agent.at(policy_number).local_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).global_reward_wrt_team,teamRover->at(rover_number).network_for_agent.at(policy_number).difference_reward_wrt_team);
@@ -2092,7 +2092,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     bool print_closest = true;
     if (print_closest) {
         FILE *p_close;
-        p_close = fopen("Close", "a");
+        p_close = fopen("Close.txt", "a");
         for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
             for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
                 for (int cl = 0 ; cl < teamRover->at(rover_number).network_for_agent.at(policy).closest_dist_to_poi.size(); cl++) {
@@ -2208,7 +2208,7 @@ void calculate_rewards(vector<Rover>* teamRover,POI* individualPOI, int numNN, i
     
     if (print_cal) {
         FILE* p_cal;
-        p_cal = fopen("Calculations", "a");
+        p_cal = fopen("Calculations.txt", "a");
         for (int rover_number =0 ; rover_number < teamRover->size(); rover_number++) {
             for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
                 for (int index = 0; index < teamRover->at(rover_number).network_for_agent.at(policy).global_objective_values.size(); index++) {
@@ -2303,41 +2303,6 @@ int check_domination(int rover_number,int policy,int other_policy,vector<Rover>*
     
 }
 
-/*
- fronts = Array.new(1){[]}
- pop.each do |p1|
- p1[:dom_count], p1[:dom_set] = 0, []
- pop.each do |p2|
- if dominates(p1, p2)
- p1[:dom_set] << p2
- elsif dominates(p2, p1)
- p1[:dom_count] += 1
- end
- end
- if p1[:dom_count] == 0
- p1[:rank] = 0
- fronts.first << p1
- end
- end
- curr = 0
- begin
- next_front = []
- fronts[curr].each do |p1|
- p1[:dom_set].each do |p2|
- p2[:dom_count] -= 1
- if p2[:dom_count] == 0
- p2[:rank] = (curr+1)
- next_front << p2
- end
- end
- end
- curr += 1
- fronts << next_front if !next_front.empty?
- end while curr < fronts.size
- return fronts
- */
-
-
 
 void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
     
@@ -2421,7 +2386,7 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
     }
     
     FILE* p_front;
-    p_front =fopen("Front", "a");
+    p_front =fopen("Front.txt", "a");
     for (int i=0; i< finial_front.size(); i++) {
         for (int j= 0; j<finial_front.at(i).size(); j++) {
             for (int k = 0; k< finial_front.at(i).at(j).size(); k++) {
@@ -2440,6 +2405,24 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
      We have to do as per rover
      */
     
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            cout<<"This is the rank:: "<<teamRover->at(rover_number).network_for_agent.at(policy).rank<<endl;
+        }
+    }
+    
+    //calculate distance between each point in same front
+    for (int front_number = 0 ; front_number < finial_front.size(); front_number++) {
+        for (int current_index = 0 ; current_index < finial_front.at(front_number).size(); current_index++) {
+            for (int other_index = 0 ; other_index < finial_front.at(front_number).size(); other_index++) {
+                if (current_index != other_index) {
+                    //calculate the distance
+                    
+                }
+            }
+        }
+    }
+    
     for (int front_number  = 0 ; front_number < finial_front.size(); front_number++) {
         for (int current_index = 0 ; current_index < finial_front.at(front_number).size(); current_index++) {
             int rover_number = finial_front.at(front_number).at(current_index).at(0);
@@ -2456,9 +2439,6 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
     }
     
 }
-
-
-
 
 
 void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
@@ -2489,13 +2469,14 @@ void perform_mo(vector<Rover>* teamRover,int number_of_objectives){
 }
 
 
-
 /***************************
  Main
  **************************/
 
 int main(int argc, const char * argv[]) {
     cout << "Hello, World!\n"<<endl;
+    remove("*.txt");
+    
     bool print_text = false;
     srand((unsigned)time(NULL));
     if (test_simulation) {
@@ -2570,7 +2551,7 @@ int main(int argc, const char * argv[]) {
         bool print_locations = true;
         if (print_locations) {
             FILE* p_print_poi;
-            p_print_poi = fopen("POI Location", "a");
+            p_print_poi = fopen("POI_Location.txt", "a");
             for (int poi_location = 0 ; poi_location < number_of_poi; poi_location++) {
                 fprintf(p_print_poi, "%f \t %f \t %f\n", individualPOI.x_position_poi_vec.at(poi_location),individualPOI.y_position_poi_vec.at(poi_location),individualPOI.value_poi_vec.at(poi_location));
             }
@@ -2605,7 +2586,7 @@ int main(int argc, const char * argv[]) {
         
         
         //Generations
-        for(int generation =0 ; generation < 10 ;generation++){
+        for(int generation =0 ; generation < 1 ;generation++){
             
                 //First Create teams
                 set_teams_to_inital(p_rover, numNN);
@@ -2647,7 +2628,7 @@ int main(int argc, const char * argv[]) {
             bool print_paths = true;
             if (print_paths) {
                 FILE* p_paths;
-                p_paths = fopen("Paths", "a");
+                p_paths = fopen("Paths.txt", "a");
                 for (int rover_number = 0 ; rover_number < teamRover.size(); rover_number++) {
                     for (int policy_number = 0 ; policy_number < teamRover.at(rover_number).network_for_agent.size(); policy_number++) {
                         for (int index = 0 ; index < teamRover.at(rover_number).network_for_agent.at(policy_number).store_x_values.size(); index++) {
@@ -2662,7 +2643,7 @@ int main(int argc, const char * argv[]) {
             calculate_rewards(p_rover,p_poi,numNN,number_of_objectives,p_poi_index);
             perform_mo(p_rover,number_of_objectives);
             
-    }
+        }
     }
     return 0;
 }
