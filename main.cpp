@@ -150,6 +150,7 @@ public:
     bool already_have_front;
     int front_number;
     vector<double> crowding_distance;
+    double crowding_distance_rank;
     vector<vector<double>> front;
     vector<vector<double>> dominate;
     vector<double> num_donimated;
@@ -2308,7 +2309,7 @@ double calculate_distance(double x,double y, double x_1,double y_1){
 }
 
 
-void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
+void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover,int number_of_objectives){
     
     cout<< "In Fitness assignemnet function "<<endl;
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
@@ -2446,6 +2447,9 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
         }
         fprintf(p_crowding_distance, "\n");
     }
+    fclose(p_crowding_distance);
+    
+    
     
     
 //    for (int front_number  = 0 ; front_number < finial_front.size(); front_number++) {
@@ -2463,11 +2467,71 @@ void fitness_assignment_fast_nondominated_sort(vector<Rover>* teamRover){
 //        }
 //    }
     
+    for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+        for (int policy = 0 ; policy < teamRover->at(rover_number).network_for_agent.size(); policy++) {
+            teamRover->at(rover_number).network_for_agent.at(policy).crowding_distance_rank = 0 ;
+        }
+    }
+    
+    for (int front_number = 0 ; front_number < finial_front.size(); front_number++) {
+        
+        vector<double> index_numbers;
+        for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
+            for (int current_index = 0 ; current_index < finial_front.at(front_number).size(); current_index++) {
+                if (rover_number == finial_front.at(front_number).at(current_index).at(0)) {
+                    index_numbers.push_back(finial_front.at(front_number).at(current_index).at(1));
+                }
+            }
+            
+            //collect all the values
+            vector<vector<double>> objective_sort_values;
+            for (int objective = 0 ; objective < number_of_objectives; objective++) {
+                vector<double> temp_objective_sort_values;
+                for (int i = 0 ; i< index_numbers.size(); i++) {
+                    temp_objective_sort_values.push_back(teamRover->at(rover_number).network_for_agent.at(index_numbers.at(i)).difference_objective_values.at(objective));
+                }
+                objective_sort_values.push_back(temp_objective_sort_values);
+                temp_objective_sort_values.clear();
+            }
+            assert(objective_sort_values.size() == number_of_objectives);
+            
+            //Sort them
+            for (int size = 0; size < objective_sort_values.size(); size++) {
+                sort(objective_sort_values.at(size).begin(),objective_sort_values.at(size).end());
+            }
+            
+            //Save the indexes
+            vector<vector<int>> sorted_indexes;
+            for (int objective = 0 ; objective < objective_sort_values.size(); objective++) {
+                vector<int> temp_sorted;
+                for (int value = 0 ; value < objective_sort_values.at(objective).size(); value++) {
+                    //now check if the value matches with networks value in rover
+                    for (int i = 0 ; i<index_numbers.size(); i++) {
+                        if (objective_sort_values.at(objective).at(value) == teamRover->at(rover_number).network_for_agent.at(index_numbers.at(i)).difference_objective_values.at(objective)) {
+                            temp_sorted.push_back(index_numbers.at(i));
+                        }
+                    }
+                }
+                sorted_indexes.push_back(temp_sorted);
+                temp_sorted.clear();
+            }
+ 
+            
+            
+            
+            
+            //clear
+            objective_sort_values.clear();
+            sorted_indexes.clear();
+            
+        }
+    }
+    
 }
 
 
 void nsga_ii(vector<Rover>* teamRover,int number_of_objectives){
-    fitness_assignment_fast_nondominated_sort(teamRover); // front is created
+    fitness_assignment_fast_nondominated_sort(teamRover,number_of_objectives); // front is created
 }
 
 void hof(vector<Rover>* teamRover,int number_of_objectives){
